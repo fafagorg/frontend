@@ -79,12 +79,6 @@
 	padding: 5px 0 0 20px
 }
 
-@media screen and (max-width:735px) {
-	#frame #sidepanel #contacts ul li.contact .wrap .meta {
-		display: none
-	}
-}
-
 #frame #sidepanel #contacts ul li.contact .wrap .meta .name {
 	font-weight: 600
 }

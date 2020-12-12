@@ -4,7 +4,7 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import Messenger from '../../pages/messenger/Messenger';
+import Messenger from './pages/messenger/Messenger';
 
 export default class App extends React.Component {
 	render() {

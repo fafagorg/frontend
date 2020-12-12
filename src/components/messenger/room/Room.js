@@ -8,8 +8,8 @@ export default class Room extends React.Component {
 			<div class="wrap">
 				<span class="contact-status away"></span>
 				<div class="meta">
-					<p class="name">Rachel Zane</p>
-					<p class="preview">I was thinking that we could have chicken tonight, sounds good?</p>
+					<p class="name">Playstation 5</p>
+					<p class="preview">Buenas, está disponible?</p>
 				</div>
 			</div>
 		</li>);

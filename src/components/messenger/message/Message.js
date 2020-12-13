@@ -5,12 +5,12 @@ export default class Message extends React.Component {
 	render() {
 		return (<>
 			<li class="sent">
-				<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
-				<p>Oh yeah, did Michael Jordan tell you that?</p>
+				<img src="https://3.bp.blogspot.com/-7dGg2SxOnPc/W58gx5zIm3I/AAAAAAAAFCM/ov25hkvKW0I0B-qruNE4_7wP0v7tiW5sQCLcBGAs/s1600/favicon.png" alt="" />
+				<p>Hola</p>
 			</li>
 			<li class="replies">
-				<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-				<p>No, I told him that.</p>
+				<img src="https://3.bp.blogspot.com/-7dGg2SxOnPc/W58gx5zIm3I/AAAAAAAAFCM/ov25hkvKW0I0B-qruNE4_7wP0v7tiW5sQCLcBGAs/s1600/favicon.png" alt="" />
+				<p>Hola, que tal?</p>
 			</li>
 		</>);
 	}

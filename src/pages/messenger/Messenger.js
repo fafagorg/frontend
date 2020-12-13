@@ -8,10 +8,11 @@ export default class Messenger extends React.Component {
 		return (
 		<>
 			<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'></link>
-			<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'></link>
+			<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"/>
 			<div id="frame">
 				<div id="sidepanel">
-					<div id="profile">
+					<div id="bottom-bar">
+						<button><i class="far fa-newspaper"></i> <span>Ver productos</span></button>
 					</div>
 					<div id="contacts">
 						<ul>
@@ -21,7 +22,7 @@ export default class Messenger extends React.Component {
 				</div>
 				<div class="content">
 					<div class="contact-profile">
-						<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+						<img src="https://3.bp.blogspot.com/-7dGg2SxOnPc/W58gx5zIm3I/AAAAAAAAFCM/ov25hkvKW0I0B-qruNE4_7wP0v7tiW5sQCLcBGAs/s1600/favicon.png" alt="" />
 						<p>Jesús Monda</p>
 					</div>
 					<div class="messages">

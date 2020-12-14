@@ -1,5 +1,5 @@
 import axios from "axios";
-import Cookies from 'universal-cookie';
+import * as ClientService from "./client";
 
 // request('GET', `${endpoint}/user/${id}`, {}, {}, true);
 export const request = async (method, uri, data, headers, auth = true) => {
@@ -8,7 +8,7 @@ export const request = async (method, uri, data, headers, auth = true) => {
   }
 
   if (auth) {
-    const access_token = new Cookies().get('access_token');
+    const access_token = ClientService.getJWT().token;
     headers.Authorization = 'Bearer ' + access_token;
   }
 

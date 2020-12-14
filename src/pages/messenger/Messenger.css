@@ -1,3 +1,8 @@
+.link {
+	color: #fff;
+	text-decoration:none;
+}
+
 #frame {
 	font-family: sans-serif;
 	width: 100%;

@@ -1,3 +1,8 @@
+.selected {
+	background: #32465a;
+	border-right: 5px solid #435f7a
+}
+
 #frame #sidepanel #contacts ul li.contact {
 	position: relative;
 	padding: 10px 0 15px 0;

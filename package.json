@@ -9,16 +9,18 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
+    "socket.io-client": "^3.0.4",
     "universal-cookie": "^4.0.4",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build --help",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

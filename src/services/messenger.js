@@ -1,7 +1,7 @@
 import * as requestService from "./request";
 
 export const getRooms = async () => {
-  // requestService.request('GET', `{process.env.REACT_APP_ENDPOINT_MESSENGER}/messenger/room`, {}, {}, true);
+  // requestService.request('GET', `{process.env.REACT_APP_ENDPOINT_API_MESSENGER}/messenger/room`, {}, {}, true);
   return [
       {
           roomId: "1-2-3",

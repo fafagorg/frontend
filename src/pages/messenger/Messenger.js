@@ -12,16 +12,18 @@ import * as ClientService from "../../services/client";
 export default class Messenger extends React.Component {
 	constructor(props) {
 		super(props)
-		this.state = {content: undefined, rooms: undefined, message: undefined, selectedRoom: undefined}
-
-		this.websocket();
-		this.getRooms();
+		this.state = {content: undefined, rooms: undefined, message: undefined}
 
 		this.websocket = this.websocket.bind(this);
 		this.getRooms = this.getRooms.bind(this);
 		this.getMessage = this.getMessage.bind(this);
-		this.selectedRoom = this.selectedRoom.bind(this);
+		this.handleChange = this.handleChange.bind(this);
 		this.sendMessage = this.sendMessage.bind(this);
+	}
+
+	componentDidMount() {
+		this.getRooms()
+		this.websocket();
 	}
 
 	websocket() {
@@ -33,15 +35,27 @@ export default class Messenger extends React.Component {
 			}
 		});
 
-		this.socket.on('message', (data) => {
+		this.socket.on('private_message', (data) => {
 			let message = this.state.message
 			if (message.roomId === data.roomId) {
+				// add message
 				message.messages.push({
 					content: data.content,
 					userId: data.userId,
 					image: data.image
 				})
-				this.setState({message: message})
+
+				// new message to false
+				let room = this.state.rooms.find(x => x.roomId === data.roomId);
+				room.newMessage = false
+
+				this.setState({message: message, rooms: this.state.rooms})
+			} else {
+				// new message to true
+				let room = this.state.rooms.find(x => x.roomId === data.roomId);
+				room.newMessage = true
+
+				this.setState({rooms: this.state.rooms})
 			}
 		});
 	}
@@ -49,7 +63,8 @@ export default class Messenger extends React.Component {
 	async getRooms() {
 		try {
 			let rooms = await MessengerServices.getRooms();
-			this.setState({rooms: rooms, selectedRoom: rooms[0].roomId});
+			rooms.map(x => x.newMessage = false);
+			this.setState({rooms: rooms});
 
 			this.getMessage(rooms[0].roomId);
 		} catch (error) {
@@ -60,23 +75,20 @@ export default class Messenger extends React.Component {
 	async getMessage(roomId) {
 		try {
 			let message = await MessengerServices.getMessages(roomId)
-			this.setState({message: message, selectedRoom: roomId});
+			this.setState({message: message});
 		} catch (error) {
 			console.log(error)
 		}
-	}
-
-	selectedRoom(roomId) {
-		this.setState({selectedRoom: roomId})
 	}
 
 	handleChange(event) {
 		this.setState({content: event.target.value});
 	}
 	sendMessage() {
-		this.socket.emit('message', {
+		this.socket.emit('send_message', {
 			userId: this.state.message.user.userId,
-			content: this.state.content
+			content: this.state.content,
+			roomId: this.state.message.roomId
 		})
 	}
 
@@ -92,8 +104,8 @@ export default class Messenger extends React.Component {
 					</div>
 					<div id="contacts">
 						<ul>
-							{this.state.rooms !== undefined &&
-								this.state.rooms.map((data, i) => <Room selectedRoom={data.roomId === this.state.selectedRoom ? 'selected ' : ''} data={data} key={i} getMessage={this.getMessage} />)
+							{this.state.rooms !== undefined && this.state.message !== undefined &&
+								this.state.rooms.map((data, i) => <Room selectedRoom={data.roomId === this.state.message.roomId ? 'selected ' : ''} data={data} key={i} getMessage={this.getMessage} />)
 							}
 						</ul>
 					</div>

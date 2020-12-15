@@ -10,7 +10,8 @@ export default class Room extends React.Component {
 		return (
 		<li class={this.props.selectedRoom+ "contact"} onClick={() => this.props.getMessage(this.props.data.roomId)}>
 			<div class="wrap">
-				<span class="contact-status away"></span>
+				<span class={this.props.data.newMessage ? 'contact-status new_message' : 'contact-status'}></span>
+				<img src={this.props.data.user.image} alt="" />
 				<div class="meta">
 					<p class="name">{this.props.data.roomId}</p>
 					<p class="preview">{this.props.data.lastMessage}</p>

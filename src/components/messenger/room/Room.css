@@ -48,23 +48,11 @@
 	width: 10px;
 	height: 10px;
 	border-radius: 50%;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap span.new_message {
+	background: #008BFF;
 	border: 2px solid #2c3e50;
-	background: #95a5a6
-}
-
-#frame #sidepanel #contacts ul li.contact .wrap span.online {
-	background: #2ecc71;
-	margin-top: 12px
-}
-
-#frame #sidepanel #contacts ul li.contact .wrap span.away {
-	background: #f1c40f;
-	margin-top: 12px
-}
-
-#frame #sidepanel #contacts ul li.contact .wrap span.busy {
-	background: #e74c3c;
-	margin-top: 12px
 }
 
 #frame #sidepanel #contacts ul li.contact .wrap img {

@@ -13,7 +13,13 @@ export default class Messenger extends React.Component {
 
     this.roomId = window.location.pathname.replace('/chat', '').replace('/', '') || undefined
     // forbidden if is not your user
-    if (this.roomId !== undefined && (Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId && Number(this.roomId.split('-')[1]) !== ClientService.getJWT().data.userId)) {
+    if (this.roomId !== undefined && 
+      (
+        (Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId && Number(this.roomId.split('-')[1]) !== ClientService.getJWT().data.userId) 
+        || 
+        Number(this.roomId.split('-')[0]) === Number(this.roomId.split('-')[1])
+        )
+      ) {
       window.location.href = "/chat";
     }
     
@@ -169,71 +175,72 @@ export default class Messenger extends React.Component {
         <link
           rel="stylesheet"
           href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
-        />
-        {this.state.selectedRoomId !== undefined ?
-          <div id="frame">
-            <div id="sidepanel">
-              <div id="bottom-bar">
-                <button>
-                  <i class="far fa-newspaper"></i>{" "}
-                  <span>
-                    <Link class="link" to="/">
-                      Ver productos
-                    </Link>
-                  </span>
-                </button>
-              </div>
-              <div id="contacts">
-                <ul>
-                  {this.state.rooms !== undefined &&
-                    this.state.rooms.map((data, i) => (
-                      <Room
-                        selectedRoomId={
-                          data.roomId === this.state.selectedRoomId
-                            ? "selected "
-                            : ""
-                        }
-                        data={data}
-                        key={i}
-                        changeRoom={this.changeRoom}
-                      />
-                    ))}
-                </ul>
-              </div>
+      />
+        <div id="frame">
+          <div id="sidepanel">
+            <div id="bottom-bar">
+              <button>
+                <i class="far fa-newspaper"></i>{" "}
+                <span>
+                  <Link class="link" to="/">
+                    Ver productos
+                  </Link>
+                </span>
+              </button>
             </div>
-            <div class="content">
-              <div class="contact-profile">
-                {this.state.message !== undefined && (
+            <div id="contacts">
+              <ul>
+                {this.state.rooms !== undefined &&
+                  this.state.rooms.map((data, i) => (
+                    <Room
+                      selectedRoomId={
+                        data.roomId === this.state.selectedRoomId
+                          ? "selected "
+                          : ""
+                      }
+                      data={data}
+                      key={i}
+                      changeRoom={this.changeRoom}
+                    />
+                  ))}
+              </ul>
+            </div>
+          </div>
+          <div class="content">
+            <div class="contact-profile">
+              {this.state.message !== undefined && (
+                <>
+                  <img src={this.state.message.user.image} alt="" />
+                  <p>{this.state.message.user.name || 'Usuario desconocido'}</p>
+                </>
+              )}
+            </div>
+            <div class="messages" id="messages">
+              <ul>
+                {this.state.message !== undefined &&
+                  this.state.message.messages.map((data, i) => (
+                    <Message data={data} key={i} />
+                  ))}
+              </ul>
+            </div>
+            <div class="message-input">
+              <div class="wrap">
+                {this.state.selectedRoomId !== undefined ?
                   <>
-                    <img src={this.state.message.user.image} alt="" />
-                    <p>{this.state.message.user.name}</p>
+                    <input
+                      type="text"
+                      placeholder="Write your message..."
+                      onChange={this.handleChange}
+                    />
+                    <button class="submit" onClick={() => this.sendMessage()}>
+                      <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                    </button>
                   </>
-                )}
-              </div>
-              <div class="messages" id="messages">
-                <ul>
-                  {this.state.message !== undefined &&
-                    this.state.message.messages.map((data, i) => (
-                      <Message data={data} key={i} />
-                    ))}
-                </ul>
-              </div>
-              <div class="message-input">
-                <div class="wrap">
-                  <input
-                    type="text"
-                    placeholder="Write your message..."
-                    onChange={this.handleChange}
-                  />
-                  <button class="submit" onClick={() => this.sendMessage()}>
-                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
-                  </button>
-                </div>
+                : ''}
               </div>
             </div>
           </div>
-        : <div id="messages">No tienes ningun chat</div>
-        }
+        </div>
       </>
     );
   }

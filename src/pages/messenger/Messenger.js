@@ -13,10 +13,10 @@ export default class Messenger extends React.Component {
 
     this.roomId = window.location.pathname.replace('/chat', '').replace('/', '') || undefined
     // forbidden if is not your user
-    if (this.roomId !== undefined && Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId) {
+    if (this.roomId !== undefined && (Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId && Number(this.roomId.split('-')[1]) !== ClientService.getJWT().data.userId)) {
       window.location.href = "/chat";
     }
-
+    
     this.state = { selectedRoomId: this.roomId, rooms: undefined, message: undefined };
     this.content = undefined
 
@@ -48,28 +48,33 @@ export default class Messenger extends React.Component {
       }
     );
 
-    this.socket.on("private_message", (data) => {
-      let message = this.state.message;
+    this.socket.on("private_message", async (data) => {
       if (this.state.selectedRoomId === data.roomId) {
-        // add message
-        if (Object.keys(this.state.message).length === 0) this.getMessage(data.roomId)
-        message.messages.push({
-          content: data.content,
-          userId: data.userId,
-          image: data.image,
-        });
-
-        // new message to false
+        // add message and room
         let room = this.state.rooms.find((x) => x.roomId === data.roomId);
-        room.newMessage = false;
+        if (room === undefined && this.state.message === undefined) {
+          await this.getRooms();
+        } else {
+          let message = this.state.message;
+          message.messages.push({
+            content: data.content,
+            userId: data.userId,
+            image: data.image,
+          });
 
-        this.setState({ message: message, rooms: this.state.rooms });
+          // new message to false
+          room.newMessage = false;
+
+          this.setState({ message: message, rooms: this.state.rooms });
+        }
+        console.log(this.state.message)
       } else {
         // new message to true
         let room = this.state.rooms.find((x) => x.roomId === data.roomId);
-        room.newMessage = true;
-
-        this.setState({ rooms: this.state.rooms });
+        if (room !== undefined) {
+          room.newMessage = true;
+          this.setState({ rooms: this.state.rooms });
+        }
       }
     });
   }
@@ -81,10 +86,13 @@ export default class Messenger extends React.Component {
       this.setState({ rooms: rooms });
 
       // if exist room, get the once
-      if (rooms.length > 0) {
+      if (rooms.length > 0 && this.state.selectedRoomId === undefined) {
         await this.getMessage(rooms[0].roomId);
+
         // select once room if I access by /chat url
-        if (this.state.selectedRoomId === undefined) this.setState({selectedRoomId: rooms[0].roomId})
+        this.setState({selectedRoomId: rooms[0].roomId})
+      } else if(rooms.length > 0 && this.state.selectedRoomId !== undefined) {
+        await this.getMessage(this.state.selectedRoomId);
       }
     } catch (error) {
       console.log("Error", error);
@@ -104,12 +112,15 @@ export default class Messenger extends React.Component {
     this.content = event.target.value;
   }
 
+  getUserDifferent(roomId) {
+    return (roomId.split('-')[0]+""+roomId.split('-')[1]).replace(ClientService.getJWT().data.userId, '')
+  }
   async sendMessage() {
     // not undefined content
     if(this.content === undefined || this.content === "") return;
 
     this.socket.emit("send_message", {
-      userId: this.state.selectedRoomId.split('-')[1],
+      userId: this.getUserDifferent(this.state.selectedRoomId),
       content: this.content,
       roomId: this.state.selectedRoomId,
     });
@@ -118,13 +129,13 @@ export default class Messenger extends React.Component {
     if (this.state.message !== undefined) {
       this.state.message.messages.push({
         content: this.content,
-        userId: this.state.selectedRoomId.split('-')[1],
+        userId: this.getUserDifferent(this.state.selectedRoomId),
         images: null,
       })
       this.setState({message: this.state.message})
     }
     // new conversation
-    if (this.state.message === undefined) await this.getRooms();
+    if (this.state.message === undefined || this.state.message.messages === []) await this.getRooms();
 
     // update last message
     let room = this.state.rooms.find((x) => x.roomId === this.state.selectedRoomId);
@@ -137,7 +148,12 @@ export default class Messenger extends React.Component {
 
   async changeRoom(roomId) {
     await this.getMessage(roomId);
-    this.setState({selectedRoomId: roomId})
+
+    // new message to false
+    let room = this.state.rooms.find((x) => x.roomId === roomId);
+    room.newMessage = false;
+
+    this.setState({selectedRoomId: roomId, rooms: this.state.rooms})
 
     // scroll bottom
     document.getElementById("messages").scrollTop = 10000000000;
@@ -170,7 +186,6 @@ export default class Messenger extends React.Component {
               <div id="contacts">
                 <ul>
                   {this.state.rooms !== undefined &&
-                    this.state.message !== undefined &&
                     this.state.rooms.map((data, i) => (
                       <Room
                         selectedRoomId={

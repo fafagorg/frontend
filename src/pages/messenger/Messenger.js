@@ -13,7 +13,7 @@ export default class Messenger extends React.Component {
 
     this.roomId = window.location.pathname.replace('/chat', '').replace('/', '') || undefined
     // forbidden if is not your user
-    if (this.roomId !== undefined && this.roomId.split('-')[0] !== ClientService.getJWT().data.userId) {
+    if (this.roomId !== undefined && Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId) {
       window.location.href = "/chat";
     }
 

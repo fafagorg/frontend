@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 export const getJWT = () => {
   // let token = new Cookies().get('access_token') || null
   let token =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxIiwiaWF0IjoxNTE2MjM5MDIyfQ.ly29-mENxIOGvzvbzazJwGrquJ5djiC1gPcaG92hSNs";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjF9.-XWGATiWn40-XFP-yRccxl5B6rLGW-fv2auhlP5PXrE";
   return {
     token: token,
     data: jwt.decode(token),

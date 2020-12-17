@@ -11,6 +11,9 @@ export default class App extends React.Component {
           <Route path="/chat">
             <Messenger />
           </Route>
+          <Route path="/chat/:roomId">
+            <Messenger />
+          </Route>
           <Route path="/">
             <Home />
           </Route>

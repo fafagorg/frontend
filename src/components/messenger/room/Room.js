@@ -9,8 +9,8 @@ export default class Room extends React.Component {
   render() {
     return (
       <li
-        class={this.props.selectedRoom + "contact"}
-        onClick={() => this.props.getMessage(this.props.data.roomId)}
+        class={this.props.selectedRoomId + "contact"}
+        onClick={() => this.props.changeRoom(this.props.data.roomId)}
       >
         <div class="wrap">
           <span

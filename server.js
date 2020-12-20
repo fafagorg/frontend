@@ -4,4 +4,4 @@ app.use(express.static("build"));
 app.get("/", function (req, res, next) {
   res.redirect("/");
 });
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.APP_PORT || 8080);

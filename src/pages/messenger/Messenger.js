@@ -44,7 +44,7 @@ export default class Messenger extends React.Component {
 
   websocket() {
     this.socket = io(
-      process.env.REACT_APP_ENDPOINT_SOCKET_MESSENGER + "/chat",
+      process.env.REACT_APP_ENDPOINT_API_MESSENGER + "/chat",
       {
         forceNew: false,
         transports: ["websocket"],

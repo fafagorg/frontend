@@ -37,11 +37,17 @@ export default class Messenger extends React.Component {
   }
 
   async componentDidMount() {
+    this.setState({ userInfo: await this.getUserInfo(this.getUserDifferent(this.roomId))}) // not work on constructor
+ 
     await this.getRooms();
     this.websocket();
 
     // scroll bottom
-    document.getElementById("messages").scrollTop = 10000000000;
+    
+  }
+
+  async getUserInfo(userId){
+    return await MessengerServices.getUserInfo(userId)
   }
 
   websocket() {
@@ -74,7 +80,6 @@ export default class Messenger extends React.Component {
 
           this.setState({ message: message, rooms: this.state.rooms });
         }
-        console.log(this.state.message)
       } else {
         // new message to true
         let room = this.state.rooms.find((x) => x.roomId === data.roomId);
@@ -97,12 +102,14 @@ export default class Messenger extends React.Component {
         await this.getMessage(rooms[0].roomId);
 
         // select once room if I access by /chat url
-        this.setState({selectedRoomId: rooms[0].roomId})
+        this.setState({selectedRoomId: rooms[0].roomId, userInfo: this.getUserInfo(this.getUserDifferent(rooms[0].roomId))})
       } else if(rooms.length > 0 && this.state.selectedRoomId !== undefined) {
         await this.getMessage(this.state.selectedRoomId);
+      } else if(rooms.length === 0) {
+        this.setState({message: undefined, rooms: undefined})
       }
     } catch (error) {
-      console.log("Error", error);
+      console.log(error);
     }
   }
 
@@ -137,7 +144,6 @@ export default class Messenger extends React.Component {
       this.state.message.messages.push({
         content: this.content,
         userId: this.getUserDifferent(this.state.selectedRoomId),
-        images: null,
       })
       this.setState({message: this.state.message})
     }
@@ -161,7 +167,7 @@ export default class Messenger extends React.Component {
     let room = this.state.rooms.find((x) => x.roomId === roomId);
     room.newMessage = false;
 
-    this.setState({selectedRoomId: roomId, rooms: this.state.rooms})
+    this.setState({selectedRoomId: roomId, userInfo: this.getUserInfo(this.getUserDifferent(roomId)), rooms: this.state.rooms})
 
     // scroll bottom
     document.getElementById("messages").scrollTop = 10000000000;
@@ -170,7 +176,7 @@ export default class Messenger extends React.Component {
   async deleteRoom(roomId) {
     try {
       await MessengerServices.removeRoom(roomId);
-      this.setState({selectedRoomId: undefined})
+      this.setState({selectedRoomId: undefined, userInfo: undefined})
       await this.getRooms();
     } catch (error) {
       console.log(error)
@@ -183,7 +189,8 @@ export default class Messenger extends React.Component {
 
     try {
       await MessengerServices.modifyRoomName(roomId, {roomName: roomName});
-      await MessengerServices.getRooms(roomId);
+      let rooms = await MessengerServices.getRooms(roomId);
+      this.setState({rooms: rooms})
     } catch (error) {
       console.log(error)
     }
@@ -234,10 +241,10 @@ export default class Messenger extends React.Component {
           </div>
           <div class="content">
             <div class="contact-profile">
-              {this.state.message !== undefined && (
+              {this.state.message !== undefined && this.state.userInfo !== undefined && (
                 <>
-                  <img src={this.state.message.user.image} alt="" />
-                  <p>{this.state.message.user.name}</p>
+                  <img src={this.state.userInfo.image} alt="" />
+                  <p>{this.state.userInfo.userName}</p>
                 </>
               )}
             </div>

@@ -6,7 +6,7 @@ steps:
       - |
         /usr/bin/envsubst < .env.production.tmp > .env.production
     env:
-      - "REACT_APP_ENDPOINT_API_MESSENGER=https://messenger-${BRANCH_NAME}-yfiwg5ekoq-ew.a.run.app"
+      - "REACT_APP_ENDPOINT_API_MESSENGER=https://messenger-${BRANCH_NAME}-dot-fis-us.appspot.com"
 
   # Verify
   - name: 'gcr.io/cloud-builders/gcloud'

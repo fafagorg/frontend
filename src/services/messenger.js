@@ -19,3 +19,11 @@ export const modifyRoomName = async (roomId, data) => {
   let request = await requestService.request('PUT', `${process.env.REACT_APP_ENDPOINT_API_MESSENGER}/v1/messenger/room/${roomId}`, data, {}, true);
   return request.data
 };
+
+export const getUserInfo = async (userId) => {
+  return {
+    userId:10,
+    userName: "Nombre usuario",
+    image: "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png"
+  }
+};

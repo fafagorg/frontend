@@ -37,7 +37,12 @@ export default class Messenger extends React.Component {
   }
 
   async componentDidMount() {
-    this.setState({ userInfo: await this.getUserInfo(this.getUserDifferent(this.roomId))}) // not work on constructor
+    if (this.roomId !== undefined) {
+      this.setState({ userInfo: await this.getUserInfo(this.getUserDifferent(this.roomId))}) // not work on constructor
+    } else {
+      this.setState({ userInfo: undefined})
+    }
+      
  
     await this.getRooms();
     this.websocket();

@@ -32,6 +32,8 @@ export default class Messenger extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.changeRoom = this.changeRoom.bind(this);
+    this.deleteRoom = this.deleteRoom.bind(this);
+    this.modifyRoomName = this.modifyRoomName.bind(this);
   }
 
   async componentDidMount() {
@@ -65,7 +67,6 @@ export default class Messenger extends React.Component {
           message.messages.push({
             content: data.content,
             userId: data.userId,
-            image: data.image,
           });
 
           // new message to false
@@ -154,6 +155,7 @@ export default class Messenger extends React.Component {
 
   async changeRoom(roomId) {
     await this.getMessage(roomId);
+    await this.readMessage(roomId);
 
     // new message to false
     let room = this.state.rooms.find((x) => x.roomId === roomId);
@@ -163,6 +165,28 @@ export default class Messenger extends React.Component {
 
     // scroll bottom
     document.getElementById("messages").scrollTop = 10000000000;
+  }
+
+  async deleteRoom(roomId) {
+    try {
+      await MessengerServices.removeRoom(roomId);
+      this.setState({selectedRoomId: undefined})
+      await this.getRooms();
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async modifyRoomName(roomId) {
+    let message = this.state.message
+    let roomName = prompt("Please enter your name", message.roomName);
+
+    try {
+      await MessengerServices.modifyRoomName(roomId, {roomName: roomName});
+      await MessengerServices.getRooms(roomId);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render() {
@@ -201,6 +225,8 @@ export default class Messenger extends React.Component {
                       data={data}
                       key={i}
                       changeRoom={this.changeRoom}
+                      deleteRoom={this.deleteRoom}
+                      modifyRoomName={this.modifyRoomName}
                     />
                   ))}
               </ul>
@@ -211,7 +237,7 @@ export default class Messenger extends React.Component {
               {this.state.message !== undefined && (
                 <>
                   <img src={this.state.message.user.image} alt="" />
-                  <p>{this.state.message.user.name || 'Usuario desconocido'}</p>
+                  <p>{this.state.message.user.name}</p>
                 </>
               )}
             </div>

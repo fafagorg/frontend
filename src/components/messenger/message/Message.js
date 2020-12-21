@@ -7,7 +7,6 @@ export default class Message extends React.Component {
     return (
       <>
         <li class={ClientService.getJWT().data.userId == this.props.data.userId ? "sent" : "replies"}>
-          <img src={this.props.data.image} alt="" />
           <p>{this.props.data.content}</p>
         </li>
       </>

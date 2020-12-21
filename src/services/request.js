@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as ClientService from "./client";
+import Cookies from "universal-cookie";
 
 // request('GET', `${endpoint}/user/${id}`, {}, {}, true);
 export const request = async (method, uri, data, headers, auth = true) => {
@@ -20,6 +21,11 @@ export const request = async (method, uri, data, headers, auth = true) => {
       headers: headers,
     });
   } catch (error) {
+    const exp = JSON.parse(atob(new Cookies().get('access_token').split('.')[1])).exp * 1000;
+    if (new Date().getTime() >= exp) {
+      new Cookies().remove('access_token')
+      window.location.href = "/";
+    }
     throw error;
   }
 };

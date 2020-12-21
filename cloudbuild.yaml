@@ -1,0 +1,26 @@
+steps:
+  - name: "bhgedigital/envsubst"
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        /usr/bin/envsubst < .env.production.tmp > .env.production
+    env:
+      - "REACT_APP_ENDPOINT_API_MESSENGER=https://messenger-${BRANCH_NAME}-dot-fis-us.appspot.com"
+
+  # Verify
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        cat .env.production
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '--file=Dockerfile_production', '--tag=gcr.io/fis-us/frontend:${COMMIT_SHA}', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/fis-us/frontend:${COMMIT_SHA}']
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args: ['beta', 'run', 'deploy', 'frontend-${BRANCH_NAME}', '--port=80', '--platform=managed', '--region=europe-west1', '--image=gcr.io/fis-us/frontend:${COMMIT_SHA}', '--min-instances=0', '--max-instances=2', '--allow-unauthenticated',  '--set-env-vars=APP_PORT=80']

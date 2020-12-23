@@ -48,7 +48,6 @@ export default class Messenger extends React.Component {
     this.websocket();
 
     // scroll bottom
-    
   }
 
   async getUserInfo(userId){
@@ -107,7 +106,7 @@ export default class Messenger extends React.Component {
         await this.getMessage(rooms[0].roomId);
 
         // select once room if I access by /chat url
-        this.setState({selectedRoomId: rooms[0].roomId, userInfo: this.getUserInfo(this.getUserDifferent(rooms[0].roomId))})
+        this.setState({selectedRoomId: rooms[0].roomId, userInfo: await this.getUserInfo(this.getUserDifferent(rooms[0].roomId))})
       } else if(rooms.length > 0 && this.state.selectedRoomId !== undefined) {
         await this.getMessage(this.state.selectedRoomId);
       } else if(rooms.length === 0) {
@@ -172,7 +171,7 @@ export default class Messenger extends React.Component {
     let room = this.state.rooms.find((x) => x.roomId === roomId);
     room.newMessage = false;
 
-    this.setState({selectedRoomId: roomId, userInfo: this.getUserInfo(this.getUserDifferent(roomId)), rooms: this.state.rooms})
+    this.setState({selectedRoomId: roomId, userInfo: await this.getUserInfo(this.getUserDifferent(roomId)), rooms: this.state.rooms})
 
     // scroll bottom
     document.getElementById("messages").scrollTop = 10000000000;

@@ -245,7 +245,7 @@ export default class Messenger extends React.Component {
           </div>
           <div class="content">
             <div class="contact-profile">
-              {this.state.message !== undefined && this.state.userInfo !== undefined && (
+              {this.state.userInfo !== undefined && (
                 <>
                   <img src={this.state.userInfo.image} alt="" />
                   <p>{this.state.userInfo.userName}</p>

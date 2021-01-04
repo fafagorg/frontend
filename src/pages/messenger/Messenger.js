@@ -20,6 +20,7 @@ export default class Messenger extends React.Component {
         Number(this.roomId.split('-')[0]) === Number(this.roomId.split('-')[1])
         )
       ) {
+      alert('El destinatario no existe');
       window.location.href = "/chat";
     }
     
@@ -120,9 +121,13 @@ export default class Messenger extends React.Component {
   async getMessage(roomId) {
     try {
       let message = await MessengerServices.getMessages(roomId);
+      console.log(message)
       this.setState({ message: message });
     } catch (error) {
-      console.log(error);
+      if(error.response.data.error == 'Invalid data'){
+        alert('El producto o el destinatario no existe');
+        window.location.href = "/chat";
+      }
     }
   }
 
@@ -165,7 +170,6 @@ export default class Messenger extends React.Component {
 
   async changeRoom(roomId) {
     await this.getMessage(roomId);
-    await this.readMessage(roomId);
 
     // new message to false
     let room = this.state.rooms.find((x) => x.roomId === roomId);

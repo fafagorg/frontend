@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 
-export default class Home extends React.Component {
+ class Home extends React.Component {
   render() {
     return (
       <>
@@ -12,3 +12,5 @@ export default class Home extends React.Component {
     );
   }
 }
+
+export default withRouter(Home)

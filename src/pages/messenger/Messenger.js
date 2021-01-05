@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import "./Messenger.css";
 import { io } from "socket.io-client";
 import Message from "../../components/messenger/message/Message";
@@ -7,7 +7,7 @@ import Room from "../../components/messenger/room/Room";
 import * as MessengerServices from "../../services/messenger";
 import * as ClientService from "../../services/client";
 
-export default class Messenger extends React.Component {
+class Messenger extends React.Component {
   constructor(props) {
     super(props);
 
@@ -21,7 +21,7 @@ export default class Messenger extends React.Component {
         )
       ) {
       alert('El destinatario no existe');
-      window.location.href = "/chat";
+      this.props.history.push("/chat");
     }
     
     this.state = { selectedRoomId: this.roomId, rooms: undefined, message: undefined };
@@ -126,7 +126,7 @@ export default class Messenger extends React.Component {
     } catch (error) {
       if(error.response.data.error == 'Invalid data'){
         alert('El producto o el destinatario no existe');
-        window.location.href = "/chat";
+        this.props.history.push("/chat");
       }
     }
   }
@@ -286,3 +286,5 @@ export default class Messenger extends React.Component {
     );
   }
 }
+
+export default withRouter(Messenger)

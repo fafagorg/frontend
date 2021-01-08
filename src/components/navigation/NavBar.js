@@ -9,12 +9,17 @@ import SearchIcon from "@material-ui/icons/Search";
 import MailIcon from "@material-ui/icons/Mail";
 import * as ROUTES from "../../constants/routes";
 import { withHistory } from "./history";
+import LoginModal from "../auth/LoginModal";
+import RegisterModal from "../auth/RegisterModal";
 
 import MenuDrawer from "./MenuDrawer";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
+  },
+  appBar: {    
+    backgroundColor: fade(theme.palette.secondary.main, 0.8)
   },
   title: {
     display: "none",
@@ -25,9 +30,9 @@ const useStyles = makeStyles((theme) => ({
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.secondary.main, 0.8),
+    backgroundColor: fade(theme.palette.primary.main, 0.8),
     "&:hover": {
-      backgroundColor: fade(theme.palette.secondary.main, 0.95),
+      backgroundColor: fade(theme.palette.primary.main, 0.95),
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,
@@ -76,9 +81,9 @@ const useStyles = makeStyles((theme) => ({
   logoButton: {
     marginRight: theme.spacing(1),
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.secondary.main, 0.8),
+    backgroundColor: fade(theme.palette.primary.main, 0.8),
     "&:hover": {
-      backgroundColor: fade(theme.palette.secondary.main, 0.95),
+      backgroundColor: fade(theme.palette.primary.main, 0.95),
     },
     color: "#ffffff",
     width: 50,
@@ -92,7 +97,7 @@ function NavBar(props) {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="fixed">
+      <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -117,16 +122,20 @@ function NavBar(props) {
             />
           </div>
           <div className={classes.grow} />
-          <IconButton
-            aria-label="show 4 new mails"
-            color="inherit"
-            onClick={() => props.history.push(ROUTES.CHAT)}
-          >
-            <Badge badgeContent={4} color="secondary">
-              <MailIcon />
-            </Badge>
-          </IconButton>
-          <MenuDrawer history={props.history} />
+          <LoginModal />
+          <RegisterModal />
+          <>
+            <IconButton
+              aria-label="show 4 new mails"
+              color="primary"
+              onClick={() => props.history.push(ROUTES.CHAT)}
+            >
+              <Badge badgeContent={4}>
+                <MailIcon />
+              </Badge>
+            </IconButton>
+            <MenuDrawer history={props.history} />
+          </>
         </Toolbar>
       </AppBar>
     </div>

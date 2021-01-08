@@ -17,11 +17,12 @@ const theme = createMuiTheme({
   palette: {
     primary: {
       // Purple and green play nicely together.
-      main: "#ffffff",
+      main: "#6800b3",
+      //main: "#40d0be", // WP color
     },
     secondary: {
       // This is green.A700 as hex.
-      main: "#6800b3",
+      main: "#ffffff",
     },
   },
 });

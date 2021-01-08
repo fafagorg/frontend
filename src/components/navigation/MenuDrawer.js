@@ -86,7 +86,7 @@ export default function SwipeableTemporaryDrawer() {
             aria-label="account of current user"
             aria-haspopup="true"
             onClick={toggleDrawer('right', true)}
-            color="inherit"
+            color="primary"
           >
             <AccountCircle />
           </IconButton>

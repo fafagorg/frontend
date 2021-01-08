@@ -17,9 +17,9 @@ class Messenger extends React.Component {
     // forbidden if is not your user
     if (this.roomId !== undefined && 
       (
-        (Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId && Number(this.roomId.split('-')[1]) !== ClientService.getJWT().data.userId) 
+        (this.roomId.split('-')[0] !== ClientService.getJWT().data.user.username && this.roomId.split('-')[1] !== ClientService.getJWT().data.user.username) 
         || 
-        Number(this.roomId.split('-')[0]) === Number(this.roomId.split('-')[1])
+        this.roomId.split('-')[0] === this.roomId.split('-')[1]
         )
       ) {
       alert('El destinatario no existe');
@@ -40,6 +40,21 @@ class Messenger extends React.Component {
   }
 
   async componentDidMount() {
+    if (this.roomId !== undefined) {
+      try {
+        await MessengerServices.getMessages(this.roomId);
+      } catch(error) {
+        if(error.response.data.error === 'Invalid data user'){
+          alert('El destinatario no existe');
+          this.props.history.push("/chat");
+        }
+        if(error.response.data.error === 'Invalid data product'){
+          alert('El producto no existe');
+          this.props.history.push("/chat");
+        }
+      }
+    }
+
     if (this.roomId !== undefined) {
       this.setState({ userInfo: await this.getUserInfo(this.getUserDifferent(this.roomId))}) // not work on constructor
     } else {
@@ -126,8 +141,13 @@ class Messenger extends React.Component {
       console.log(message)
       this.setState({ message: message });
     } catch (error) {
-      if(error.response.data.error == 'Invalid data'){
-        alert('El producto o el destinatario no existe');
+      console.log(error.response.data.error)
+      if(error.response.data.error === 'Invalid data user'){
+        alert('El destinatario no existe');
+        this.props.history.push(ROUTES.CHAT);
+      }
+      if(error.response.data.error === 'Invalid data product'){
+        alert('El producto no existe');
         this.props.history.push(ROUTES.CHAT);
       }
     }
@@ -138,7 +158,11 @@ class Messenger extends React.Component {
   }
 
   getUserDifferent(roomId) {
-    return (roomId.split('-')[0]+""+roomId.split('-')[1]).replace(ClientService.getJWT().data.userId, '')
+    if (roomId.split('-')[0] === ClientService.getJWT().data.user.username) {
+      return roomId.split('-')[1]
+    } else {
+      return roomId.split('-')[0]
+    }
   }
   async sendMessage() {
     // not undefined content
@@ -200,7 +224,9 @@ class Messenger extends React.Component {
     try {
       await MessengerServices.modifyRoomName(roomId, {roomName: roomName});
       let rooms = await MessengerServices.getRooms(roomId);
-      this.setState({rooms: rooms})
+
+      message.roomName = roomName
+      this.setState({rooms: rooms, message: message})
     } catch (error) {
       console.log(error)
     }

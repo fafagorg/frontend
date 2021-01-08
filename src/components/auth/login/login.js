@@ -54,7 +54,7 @@ export default class Login extends React.Component {
           <input type="password" value={this.state.password} name='password' onChange={this.handleChange}/>
         </label>
         <input type="submit" value="Submit" />
-        {true == true && (
+        {this.state.errors.login.length>0 && (
           <div class="error">{this.state.errors.login} </div>)}
       </form>
       

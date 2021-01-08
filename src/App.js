@@ -1,6 +1,6 @@
 import React from "react";
 import './App.css';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Router, Route } from "react-router-dom";
 import * as ROUTES from "./constants/routes";
 import Messenger from "./pages/messenger/Messenger";
 import Home from "./pages/home/Home";
@@ -9,7 +9,7 @@ import NavBar from "./components/navigation/NavBar";
 
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
-import {withHistory} from "./components/navigation/history";
+import { withHistory } from "./components/navigation/history";
 
 
 const theme = createMuiTheme({
@@ -31,18 +31,12 @@ class App extends React.Component {
     return (
       <ThemeProvider theme={theme}>
         <div className="App">
-          <NavBar history={this.props.history}/>
+          <NavBar />
           <div className="Router">
             <Router history={this.props.history}>
-              <Switch>
-                <Route exact path={ROUTES.CHAT} component={Messenger} />
-                <Route path="/chat/:roomId">
-                  <Messenger />
-                </Route>
-                <Route path="/">
-                  <Home />
-                </Route>
-              </Switch>
+              <Route exact path={ROUTES.LANDING} component={Home} />
+              <Route exact path={ROUTES.CHAT} component={Messenger} />
+              <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
             </Router>
           </div>
         </div>

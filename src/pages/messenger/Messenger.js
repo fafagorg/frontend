@@ -1,17 +1,19 @@
 import React from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "./Messenger.css";
 import { io } from "socket.io-client";
 import Message from "../../components/messenger/message/Message";
 import Room from "../../components/messenger/room/Room";
 import * as MessengerServices from "../../services/messenger";
 import * as ClientService from "../../services/client";
+import { withHistory } from "../../components/navigation/history";
+import * as ROUTES from "../../constants/routes";
 
 class Messenger extends React.Component {
   constructor(props) {
     super(props);
 
-    this.roomId = window.location.pathname.replace('/chat', '').replace('/', '') || undefined
+    this.roomId = window.location.pathname.replace(ROUTES.CHAT, '').replace('/', '') || undefined
     // forbidden if is not your user
     if (this.roomId !== undefined && 
       (
@@ -21,7 +23,7 @@ class Messenger extends React.Component {
         )
       ) {
       alert('El destinatario no existe');
-      this.props.history.push("/chat");
+      this.props.history.push(ROUTES.CHAT);
     }
     
     this.state = { selectedRoomId: this.roomId, rooms: undefined, message: undefined };
@@ -126,7 +128,7 @@ class Messenger extends React.Component {
     } catch (error) {
       if(error.response.data.error == 'Invalid data'){
         alert('El producto o el destinatario no existe');
-        this.props.history.push("/chat");
+        this.props.history.push(ROUTES.CHAT);
       }
     }
   }
@@ -287,4 +289,4 @@ class Messenger extends React.Component {
   }
 }
 
-export default withRouter(Messenger)
+export default withHistory(Messenger);

@@ -9,7 +9,6 @@ import {HistoryContext} from './components/navigation/history'
 
 const customHistory = createBrowserHistory();
 
-
 ReactDOM.render(
   <HistoryContext.Provider value={customHistory}>
     <React.StrictMode>

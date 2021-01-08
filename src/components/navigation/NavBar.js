@@ -1,90 +1,90 @@
-import React from 'react';
-import { fade, makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import Badge from '@material-ui/core/Badge';
-import SearchIcon from '@material-ui/icons/Search';
-import MailIcon from '@material-ui/icons/Mail';
+import React from "react";
+import { fade, makeStyles } from "@material-ui/core/styles";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import IconButton from "@material-ui/core/IconButton";
+import InputBase from "@material-ui/core/InputBase";
+import Badge from "@material-ui/core/Badge";
+import SearchIcon from "@material-ui/icons/Search";
+import MailIcon from "@material-ui/icons/Mail";
 import * as ROUTES from "../../constants/routes";
-import {withHistory} from "./history";
+import { withHistory } from "./history";
 
-import MenuDrawer from './MenuDrawer'
+import MenuDrawer from "./MenuDrawer";
 
 const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
   title: {
-    display: 'none',
-    [theme.breakpoints.up('sm')]: {
-      display: 'block',
+    display: "none",
+    [theme.breakpoints.up("sm")]: {
+      display: "block",
     },
   },
   search: {
-    position: 'relative',
+    position: "relative",
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.secondary.main, 0.8),
-    '&:hover': {
+    "&:hover": {
       backgroundColor: fade(theme.palette.secondary.main, 0.95),
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing(3)
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(3),
     },
-    color: '#ffffff'
+    color: "#ffffff",
   },
   searchIcon: {
     padding: theme.spacing(0, 1),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#ffffff'
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#ffffff",
   },
   inputRoot: {
-    color: 'inherit',
-    width: '100%'
+    color: "inherit",
+    width: "100%",
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "20ch",
     },
   },
   sectionDesktop: {
-    display: 'none',
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "flex",
     },
   },
   sectionMobile: {
-    display: 'flex',
-    [theme.breakpoints.up('md')]: {
-      display: 'none',
+    display: "flex",
+    [theme.breakpoints.up("md")]: {
+      display: "none",
     },
   },
   logoButton: {
     marginRight: theme.spacing(1),
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.secondary.main, 0.8),
-    '&:hover': {
+    "&:hover": {
       backgroundColor: fade(theme.palette.secondary.main, 0.95),
     },
     color: "#ffffff",
     width: 50,
     heigth: 50,
-    padding: "7px 0"
-  }
+    padding: "7px 0",
+  },
 }));
 
 function NavBar(props) {
@@ -93,7 +93,7 @@ function NavBar(props) {
   return (
     <div className={classes.grow}>
       <AppBar position="fixed">
-        <Toolbar>          
+        <Toolbar>
           <IconButton
             edge="start"
             className={classes.logoButton}
@@ -113,18 +113,20 @@ function NavBar(props) {
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
-              inputProps={{ 'aria-label': 'search' }}
+              inputProps={{ "aria-label": "search" }}
             />
           </div>
           <div className={classes.grow} />
-          <IconButton aria-label="show 4 new mails" 
-          color="inherit"
-          onClick={() => props.history.push(ROUTES.CHAT)}>
+          <IconButton
+            aria-label="show 4 new mails"
+            color="inherit"
+            onClick={() => props.history.push(ROUTES.CHAT)}
+          >
             <Badge badgeContent={4} color="secondary">
               <MailIcon />
             </Badge>
           </IconButton>
-          <MenuDrawer history={props.history}/>
+          <MenuDrawer history={props.history} />
         </Toolbar>
       </AppBar>
     </div>

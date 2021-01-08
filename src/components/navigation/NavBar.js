@@ -99,7 +99,7 @@ function NavBar(props) {
             className={classes.logoButton}
             color="inherit"
             aria-label="open drawer"
-            onClick={() => props.history.push(ROUTES.LANDING)}
+            onClick={() => props.history.push(ROUTES.HOME)}
           >
             売
           </IconButton>

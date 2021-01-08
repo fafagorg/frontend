@@ -3,6 +3,7 @@ import './App.css';
 import { Router, Route } from "react-router-dom";
 import * as ROUTES from "./constants/routes";
 import Messenger from "./pages/messenger/Messenger";
+import Search from "./pages/products/Search";
 import Home from "./pages/home/Home";
 
 import NavBar from "./components/navigation/NavBar";
@@ -34,9 +35,10 @@ class App extends React.Component {
           <NavBar />
           <div className="Router">
             <Router history={this.props.history}>
-              <Route exact path={ROUTES.LANDING} component={Home} />
+              <Route exact path={ROUTES.HOME} component={Home} />
               <Route exact path={ROUTES.CHAT} component={Messenger} />
               <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
+              <Route exact path={ROUTES.SEARCH} component={Search} />
             </Router>
           </div>
         </div>

@@ -10,6 +10,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import IconButton from '@material-ui/core/IconButton';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 
 const useStyles = makeStyles((theme) => ({
   list: {
@@ -81,21 +82,21 @@ export default function SwipeableTemporaryDrawer() {
   return (
     <div>
           <IconButton
-            edge="start"
-            className={classes.menuButton}
+            edge="end"
+            aria-label="account of current user"
+            aria-haspopup="true"
+            onClick={toggleDrawer('right', true)}
             color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer('left', true)}
           >
-            売
+            <AccountCircle />
           </IconButton>
           <SwipeableDrawer
-            anchor='left'
-            open={state['left']}
-            onClose={toggleDrawer('left', false)}
-            onOpen={toggleDrawer('left', true)}
+            anchor='right'
+            open={state['right']}
+            onClose={toggleDrawer('right', false)}
+            onOpen={toggleDrawer('right', true)}
           >
-            {list('left')}
+            {list('right')}
           </SwipeableDrawer>  
     </div>
   );

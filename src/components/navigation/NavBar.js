@@ -12,6 +12,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MailIcon from '@material-ui/icons/Mail';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
+import * as ROUTES from "../../constants/routes";
 
 import MenuDrawer from './MenuDrawer'
 
@@ -76,9 +77,21 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  logoButton: {
+    marginRight: theme.spacing(1),
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.secondary.main, 0.8),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.secondary.main, 0.95),
+    },
+    color: "#ffffff",
+    width: 50,
+    heigth: 50,
+    padding: "7px 0"
+  }
 }));
 
-export default function PrimarySearchAppBar() {
+export default function PrimarySearchAppBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -164,7 +177,15 @@ export default function PrimarySearchAppBar() {
     <div className={classes.grow}>
       <AppBar position="fixed">
         <Toolbar>          
-          <MenuDrawer />
+          <IconButton
+            edge="start"
+            className={classes.logoButton}
+            color="inherit"
+            aria-label="open drawer"
+            //onClick={toggleDrawer('left', true)}
+          >
+            売
+          </IconButton>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
@@ -179,39 +200,14 @@ export default function PrimarySearchAppBar() {
             />
           </div>
           <div className={classes.grow} />
-          <div className={classes.sectionDesktop}>
-            <IconButton aria-label="show 4 new mails" color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <IconButton aria-label="show 17 new notifications" color="inherit">
-              <Badge badgeContent={17} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </div>
-          <div className={classes.sectionMobile}>
-            <IconButton
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
-          </div>
+          <IconButton aria-label="show 4 new mails" 
+          color="inherit"
+          onClick={(event) => props.history.push(ROUTES.CHAT)}>
+            <Badge badgeContent={4} color="secondary">
+              <MailIcon />
+            </Badge>
+          </IconButton>
+          <MenuDrawer />
         </Toolbar>
       </AppBar>
       {renderMobileMenu}

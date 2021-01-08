@@ -3,12 +3,19 @@ import ReactDOM from "react-dom";
 import "./index.js";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import 'fontsource-roboto';
+import "fontsource-roboto";
+import {createBrowserHistory} from "history";
+import {HistoryContext} from './components/navigation/history'
+
+const customHistory = createBrowserHistory();
+
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <HistoryContext.Provider value={customHistory}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </HistoryContext.Provider>,
   document.getElementById("root")
 );
 

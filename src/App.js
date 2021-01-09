@@ -5,6 +5,8 @@ import * as ROUTES from "./constants/routes";
 import Messenger from "./pages/messenger/Messenger";
 import Search from "./pages/products/Search";
 import Home from "./pages/home/Home";
+import './bootstrap.min.css';
+
 
 import NavBar from "./components/navigation/NavBar";
 

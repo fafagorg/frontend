@@ -29,6 +29,7 @@ export default function LoginDialog() {
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [loginSucces, setLoginSucces] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -37,19 +38,29 @@ export default function LoginDialog() {
     setUsernameError("");
     setPasswordError("");
 
-    AuthService.login({
-      username: username,
-      password: password
-    }).then(res => {
-      var token = res.token
-      new Cookies().set('access_token', token)
-      handleClose();
-    }).catch(err => {
+    if(username===""){
       setUsernameError("Cannot be empty.");
-      setPasswordError("Hey bro.");
-      setLoginError('Username or password are wrong');
-    })
+    }
+    if(password===""){
+      setPasswordError("Cannot be empty.");
+    }
+
+    if(username!=="" && password !==""){
+      AuthService.login({
+        username: username,
+        password: password
+      }).then(res => {
+        console.log(res)
+        var token = res.token
+        new Cookies().set('access_token', token)
+        setLoginSucces('Logged correctly')
+        handleClose();
+      }).catch(err => {
+        setLoginError('Username or password are wrong');
+      })
+    }
   }
+
 
   return (
     <div>
@@ -68,10 +79,9 @@ export default function LoginDialog() {
               Please, enter your credentials to log into the system.
           </DialogContentText>
 
-            {usernameError.length !== 0 ?
               <TextField
                 autoFocus
-                error
+                error = {usernameError.length !== 0}
                 helperText={usernameError}
                 name="username"
                 margin="dense"
@@ -81,22 +91,9 @@ export default function LoginDialog() {
                 type="text"
                 fullWidth
               />
-              :
+            
               <TextField
-                autoFocus
-                name="username"
-                margin="dense"
-                id="username"
-                onChange={event => setUsername(event.target.value)}
-                label="Username"
-                type="text"
-                fullWidth
-              />
-            }
-
-            {passwordError.length !== 0 ?
-              <TextField
-                error
+                error = {passwordError.length !== 0}
                 helperText={passwordError}
                 name="password"
                 margin="dense"
@@ -106,19 +103,14 @@ export default function LoginDialog() {
                 type="password"
                 fullWidth
               />
-              :
-              <TextField
-                name="password"
-                margin="dense"
-                id="password"
-                onChange={event => setPassword(event.target.value)}
-                label="Password"
-                type="password"
-                fullWidth
-              />
-            }
+
+
             {loginError.length !== 0 &&
-              <Alert severity="error">This is an error alert — check it out!</Alert>
+              <Alert severity="error">{loginError}</Alert>
+            }
+            
+            {loginSucces.length !== 0 &&
+              <Alert severity="success">{loginSucces}</Alert>
             }
           </DialogContent>
           <DialogActions>

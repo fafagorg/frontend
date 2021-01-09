@@ -22,25 +22,6 @@ export default class Login extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleChange(event) {
-    var name = event.target.name
-    this.setState({[name] : event.target.value});
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-
-    AuthService.login({
-      username: this.state.username,
-      password: this.state.password
-    }).then(res=>{
-      var token = res.token
-      new Cookies().set('access_token', token)
-    }).catch(err=>{
-      this.setState({errors: {login: 'Username or password are wrong'}})
-    })
-    //event.preventDefault();
-  }
 
   render() {
     return (

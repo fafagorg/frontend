@@ -5,7 +5,6 @@ import * as ROUTES from "./constants/routes";
 import Messenger from "./pages/messenger/Messenger";
 import Search from "./pages/products/Search";
 import Home from "./pages/home/Home";
-import Login_View from "./pages/login/Login";
 import './bootstrap.min.css';
 
 

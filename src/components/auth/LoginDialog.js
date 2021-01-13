@@ -15,6 +15,12 @@ function LoginDialog(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
+    setUsername('')
+    setPassword('')
+    setUsernameError('')
+    setPasswordError('')
+    setLoginError('')
+    setLoginSucces('')
     setOpen(true);
   };
 
@@ -52,8 +58,8 @@ function LoginDialog(props) {
       }).then(res => {
         var token = res.token;
         props.setUserToken(token);
-        setLoginSucces('Logged correctly');
-        handleClose();
+        setLoginSucces('Logged correctly. Automatically closing this window in 3 seconds.');
+        setTimeout(() => handleClose(), 3000);
       }).catch(err => {
         console.log(err);
         setLoginError('Username or password are wrong');
@@ -79,32 +85,34 @@ function LoginDialog(props) {
             <DialogContentText>
               Please, enter your credentials to log into the system.
           </DialogContentText>
+            {loginSucces.length === 0 &&
+              <>
+                <TextField
+                  autoFocus
+                  error={usernameError.length !== 0}
+                  helperText={usernameError}
+                  name="username"
+                  margin="dense"
+                  id="username"
+                  onChange={event => setUsername(event.target.value)}
+                  label="Username"
+                  type="text"
+                  fullWidth
+                />
 
-            <TextField
-              autoFocus
-              error={usernameError.length !== 0}
-              helperText={usernameError}
-              name="username"
-              margin="dense"
-              id="username"
-              onChange={event => setUsername(event.target.value)}
-              label="Username"
-              type="text"
-              fullWidth
-            />
-
-            <TextField
-              error={passwordError.length !== 0}
-              helperText={passwordError}
-              name="password"
-              margin="dense"
-              id="password"
-              onChange={event => setPassword(event.target.value)}
-              label="Password"
-              type="password"
-              fullWidth
-            />
-
+                <TextField
+                  error={passwordError.length !== 0}
+                  helperText={passwordError}
+                  name="password"
+                  margin="dense"
+                  id="password"
+                  onChange={event => setPassword(event.target.value)}
+                  label="Password"
+                  type="password"
+                  fullWidth
+                />
+              </>
+            }
 
             {loginError.length !== 0 &&
               <Alert severity="error">{loginError}</Alert>
@@ -116,11 +124,13 @@ function LoginDialog(props) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">
-              Cancel
-          </Button>
-            <Button type="submit" value="Submit" color="primary">
-              Login
-          </Button>
+              {loginSucces.length === 0 ? 'Cancel' : 'Close'}
+            </Button>
+            {loginSucces.length === 0 &&
+              <Button type="submit" value="Submit" color="primary">
+                Login
+              </Button>
+            }
           </DialogActions>
         </form>
       </Dialog>

@@ -7,14 +7,20 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import * as AuthService from "../../services/auth";
-import Cookies from "universal-cookie";
 import Alert from '@material-ui/lab/Alert';
+import { connect } from 'react-redux';
 
-export default function LoginDialog() {
+function LoginDialog(props) {
   // Dialog
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
+    setUsername('')
+    setPassword('')
+    setUsernameError('')
+    setPasswordError('')
+    setLoginError('')
+    setLoginSucces('')
     setOpen(true);
   };
 
@@ -38,24 +44,24 @@ export default function LoginDialog() {
     setUsernameError("");
     setPasswordError("");
 
-    if(username===""){
+    if (username === "") {
       setUsernameError("Cannot be empty.");
     }
-    if(password===""){
+    if (password === "") {
       setPasswordError("Cannot be empty.");
     }
 
-    if(username!=="" && password !==""){
+    if (username !== "" && password !== "") {
       AuthService.login({
         username: username,
         password: password
       }).then(res => {
-        console.log(res)
-        var token = res.token
-        new Cookies().set('access_token', token)
-        setLoginSucces('Logged correctly')
-        handleClose();
+        var token = res.token;
+        props.setUserToken(token);
+        setLoginSucces('Logged correctly. Automatically closing this window in 3 seconds.');
+        setTimeout(() => handleClose(), 3000);
       }).catch(err => {
+        console.log(err);
         setLoginError('Username or password are wrong');
       })
     }
@@ -64,8 +70,9 @@ export default function LoginDialog() {
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Login</Button>
-
+      {!props.userToken &&
+        <Button onClick={handleClickOpen}>Login</Button>
+      }
       <Dialog
         open={open}
         onClose={handleClose}
@@ -78,51 +85,71 @@ export default function LoginDialog() {
             <DialogContentText>
               Please, enter your credentials to log into the system.
           </DialogContentText>
+            {loginSucces.length === 0 &&
+              <>
+                <TextField
+                  autoFocus
+                  error={usernameError.length !== 0}
+                  helperText={usernameError}
+                  name="username"
+                  margin="dense"
+                  id="username"
+                  onChange={event => setUsername(event.target.value)}
+                  label="Username"
+                  type="text"
+                  fullWidth
+                />
 
-              <TextField
-                autoFocus
-                error = {usernameError.length !== 0}
-                helperText={usernameError}
-                name="username"
-                margin="dense"
-                id="username"
-                onChange={event => setUsername(event.target.value)}
-                label="Username"
-                type="text"
-                fullWidth
-              />
-            
-              <TextField
-                error = {passwordError.length !== 0}
-                helperText={passwordError}
-                name="password"
-                margin="dense"
-                id="password"
-                onChange={event => setPassword(event.target.value)}
-                label="Password"
-                type="password"
-                fullWidth
-              />
-
+                <TextField
+                  error={passwordError.length !== 0}
+                  helperText={passwordError}
+                  name="password"
+                  margin="dense"
+                  id="password"
+                  onChange={event => setPassword(event.target.value)}
+                  label="Password"
+                  type="password"
+                  fullWidth
+                />
+              </>
+            }
 
             {loginError.length !== 0 &&
               <Alert severity="error">{loginError}</Alert>
             }
-            
+
             {loginSucces.length !== 0 &&
               <Alert severity="success">{loginSucces}</Alert>
             }
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">
-              Cancel
-          </Button>
-            <Button type="submit" value="Submit" color="primary">
-              Login
-          </Button>
+              {loginSucces.length === 0 ? 'Cancel' : 'Close'}
+            </Button>
+            {loginSucces.length === 0 &&
+              <Button type="submit" value="Submit" color="primary">
+                Login
+              </Button>
+            }
           </DialogActions>
         </form>
       </Dialog>
     </div>
   );
 }
+
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setUserToken: (token) => {
+      dispatch({ type: "SET_TOKEN", payload: token });
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginDialog);

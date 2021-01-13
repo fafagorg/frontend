@@ -3,6 +3,7 @@ import './App.css';
 import { Router, Route } from "react-router-dom";
 import * as ROUTES from "./constants/routes";
 import Messenger from "./pages/messenger/Messenger";
+import Profile from "./pages/profile/Profile";
 import Search from "./pages/products/Search";
 import Home from "./pages/home/Home";
 import './bootstrap.min.css';
@@ -13,6 +14,9 @@ import NavBar from "./components/navigation/NavBar";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { withHistory } from "./components/navigation/history";
+
+// Redux
+import { connect } from 'react-redux'
 
 
 const theme = createMuiTheme({
@@ -35,12 +39,17 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <div className="App">
           <NavBar />
-          <div className="Router">
+          <div className="Router" align="center">
             <Router history={this.props.history}>
               <Route exact path={ROUTES.HOME} component={Home} />
-              <Route exact path={ROUTES.CHAT} component={Messenger} />
-              <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
               <Route exact path={ROUTES.SEARCH} component={Search} />
+              {this.props.userToken &&
+                <>
+                  <Route exact path={ROUTES.USER_PROFILE} component={Profile} />
+                  <Route exact path={ROUTES.CHAT} component={Messenger} />
+                  <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
+                </>
+              }
             </Router>
           </div>
         </div>
@@ -49,4 +58,10 @@ class App extends React.Component {
   }
 }
 
-export default withHistory(App);
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+
+export default connect(mapStateToProps)(withHistory(App));

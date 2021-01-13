@@ -4,17 +4,30 @@ import "./index.js";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "fontsource-roboto";
-import {createBrowserHistory} from "history";
-import {HistoryContext} from './components/navigation/history'
 
+// Redux
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducer from './reducers/reducer';
+
+// Router
+import { createBrowserHistory } from "history";
+import { HistoryContext } from './components/navigation/history'
 const customHistory = createBrowserHistory();
 
+
+const store = createStore(
+  reducer
+);
+
 ReactDOM.render(
-  <HistoryContext.Provider value={customHistory}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </HistoryContext.Provider>,
+  <Provider store={store}>
+    <HistoryContext.Provider value={customHistory}>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </HistoryContext.Provider>
+  </Provider>,
   document.getElementById("root")
 );
 

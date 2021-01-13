@@ -8,7 +8,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import * as AuthService from "../../services/auth";
 import Alert from '@material-ui/lab/Alert';
-import validator from 'validator' 
+import validator from 'validator'
 
 export default function RegisterDialog() {
 
@@ -40,101 +40,102 @@ export default function RegisterDialog() {
   const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  
+
   const [registerError, setRegisterError] = useState('');
   const [registerSucces, setRegisterSucces] = useState('');
 
   const validatePhoneNumber = (number) => {
     const isValidPhoneNumber = validator.isMobilePhone(number)
     return (isValidPhoneNumber)
-   }
-  const handleChange = (event) =>{
+  }
+  const handleChange = (event) => {
     var name = event.name
     var value = event.value
     switch (name) {
       case "username":
         setUsername(value);
         //Validation
-        if(value===""){
+        if (value === "") {
           setUsernameError("Cannot be empty.");
-        }else{
+        } else {
           setUsernameError("");
         }
         break;
       case "password":
         setPassword(value);
         //Validation
-        console.log(password.length )
-        if(value===""){
+        console.log(password.length)
+        if (value === "") {
           setPasswordError("Cannot be empty.");
-        }else if(password.length < 2){
+        } else if (password.length < 2) {
           setPasswordError("Password is too short")
-        }else if(confirmPassword!=="" && value !== confirmPassword){
+        } else if (confirmPassword !== "" && value !== confirmPassword) {
           setConfirmPasswordError("Passwords doesn't match")
-        }else{
+        } else {
           setPasswordError("")
         }
         break;
       case "name":
         setName(value)
         //Validation
-        if(value===""){
+        if (value === "") {
           setNameError("Cannot be empty.");
-        }else{
+        } else {
           setNameError("");
         }
         break;
       case "surname":
         setSurname(value)
         //Validation
-        if(value===""){
+        if (value === "") {
           setSurnameError("Cannot be empty.");
-        }else{
+        } else {
           setSurnameError("");
         }
         break;
       case "email":
         setEmail(value)
         //Validation
-        if(value===""){
+        if (value === "") {
           setEmailError("Cannot be empty.");
-        }else if(!
+        } else if (!
           /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
             value,
-          )){
+          )) {
           setEmailError("Please enter a valid email")
-        }else{
+        } else {
           setEmailError("")
         }
         break;
       case "confirmPassword":
         setConfirmPassword(value)
-        if(value===""){
+        if (value === "") {
           setConfirmPasswordError("Cannot be empty.");
-        }else if(password!=="" && value !== password){
+        } else if (password !== "" && value !== password) {
           setConfirmPasswordError("Passwords doesn't match")
-        }else{
+        } else {
           setConfirmPasswordError("")
         }
         break;
       case "phone":
         setPhone(value)
-        if(value===""){
+        if (value === "") {
           setPhoneError("Cannot be empty.");
-        }else if(!validatePhoneNumber(value)){
+        } else if (!validatePhoneNumber(value)) {
           setPhoneError("Please enter a valid phone number")
-        }else{
+        } else {
           setPhoneError("")
         }
+        break;
       default:
         break;
-      }
     }
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if(usernameError==="" && passwordError==="" && nameError==="" && surnameError==="" && emailError==="" && phoneError===""){
+    if (usernameError === "" && passwordError === "" && nameError === "" && surnameError === "" && emailError === "" && phoneError === "") {
       AuthService.register({
         username: username,
         password: password,
@@ -142,13 +143,13 @@ export default function RegisterDialog() {
         surname: surname,
         email: email,
         phone: phone
-      }).then(res =>{
+      }).then(res => {
         setRegisterSucces("Registred correctly")
         setRegisterError("")
-      }).catch(err =>{
+      }).catch(err => {
         setRegisterError("Username is already taken")
-      }) 
-    }else{
+      })
+    } else {
       setRegisterError("Please check all inputs")
     }
   }
@@ -161,27 +162,27 @@ export default function RegisterDialog() {
         onClose={handleClose}
         aria-labelledby="form-dialog-title"
       >
-    <form onSubmit={handleSubmit}>
-        <DialogTitle id="form-dialog-title">Register</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Introduce your personal data, all inputs are required
+        <form onSubmit={handleSubmit}>
+          <DialogTitle id="form-dialog-title">Register</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Introduce your personal data, all inputs are required
           </DialogContentText>
-          
-          <TextField
-                autoFocus
-                error = {usernameError.length !== 0}
-                helperText={usernameError}
-                name="username"
-                margin="dense"
-                id="username"
-                onChange={event => handleChange(event.target)}
-                label="Username"
-                type="text"
-                fullWidth
-          />
-          <TextField
-              error = {passwordError.length !== 0}
+
+            <TextField
+              autoFocus
+              error={usernameError.length !== 0}
+              helperText={usernameError}
+              name="username"
+              margin="dense"
+              id="username"
+              onChange={event => handleChange(event.target)}
+              label="Username"
+              type="text"
+              fullWidth
+            />
+            <TextField
+              error={passwordError.length !== 0}
               helperText={passwordError}
               name="password"
               margin="dense"
@@ -190,9 +191,9 @@ export default function RegisterDialog() {
               label="Password"
               type="password"
               fullWidth
-          />
-          <TextField
-              error = {confirmPasswordError.length !== 0}
+            />
+            <TextField
+              error={confirmPasswordError.length !== 0}
               helperText={confirmPasswordError}
               name="confirmPassword"
               margin="dense"
@@ -201,9 +202,9 @@ export default function RegisterDialog() {
               label="Confirm Password"
               type="password"
               fullWidth
-          />
-          <TextField
-              error = {nameError.length !== 0}
+            />
+            <TextField
+              error={nameError.length !== 0}
               helperText={nameError}
               name="name"
               margin="dense"
@@ -212,9 +213,9 @@ export default function RegisterDialog() {
               label="Name"
               type="text"
               fullWidth
-          />
-          <TextField
-              error = {surnameError.length !== 0}
+            />
+            <TextField
+              error={surnameError.length !== 0}
               helperText={surnameError}
               name="surname"
               margin="dense"
@@ -223,9 +224,9 @@ export default function RegisterDialog() {
               label="Surname"
               type="text"
               fullWidth
-          />         
-          <TextField
-              error = {emailError.length !== 0}
+            />
+            <TextField
+              error={emailError.length !== 0}
               helperText={emailError}
               name="email"
               margin="dense"
@@ -234,9 +235,9 @@ export default function RegisterDialog() {
               label="Email"
               type="text"
               fullWidth
-          />
-          <TextField
-              error = {phoneError.length !== 0}
+            />
+            <TextField
+              error={phoneError.length !== 0}
               helperText={phoneError}
               name="phone"
               margin="dense"
@@ -245,27 +246,27 @@ export default function RegisterDialog() {
               label="Phone"
               type="text"
               fullWidth
-          />
+            />
 
-          
-          {registerError.length !== 0 &&
-            <Alert severity="error">{registerError}</Alert>
-          }
-          
-          {registerSucces.length !== 0 &&
-            <Alert severity="success">{registerSucces}</Alert>
-          }
 
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
+            {registerError.length !== 0 &&
+              <Alert severity="error">{registerError}</Alert>
+            }
+
+            {registerSucces.length !== 0 &&
+              <Alert severity="success">{registerSucces}</Alert>
+            }
+
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
           </Button>
-          <Button type="submit" value="Submit" color="primary">
-            Submit
+            <Button type="submit" value="Submit" color="primary">
+              Submit
           </Button>
-        </DialogActions>
-      </form>
+          </DialogActions>
+        </form>
       </Dialog>
     </div>
   );

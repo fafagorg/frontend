@@ -14,6 +14,9 @@ import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
 import { withHistory } from "./components/navigation/history";
 
+// Redux
+import { connect } from 'react-redux'
+
 
 const theme = createMuiTheme({
   palette: {
@@ -38,9 +41,13 @@ class App extends React.Component {
           <div className="Router">
             <Router history={this.props.history}>
               <Route exact path={ROUTES.HOME} component={Home} />
-              <Route exact path={ROUTES.CHAT} component={Messenger} />
-              <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
               <Route exact path={ROUTES.SEARCH} component={Search} />
+              {this.props.userToken !== '' &&
+                <>
+                  <Route exact path={ROUTES.CHAT} component={Messenger} />
+                  <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
+                </>
+              }
             </Router>
           </div>
         </div>
@@ -49,4 +56,10 @@ class App extends React.Component {
   }
 }
 
-export default withHistory(App);
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+
+export default connect(mapStateToProps)(withHistory(App));

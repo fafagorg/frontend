@@ -9,8 +9,9 @@ import SearchIcon from "@material-ui/icons/Search";
 import MailIcon from "@material-ui/icons/Mail";
 import * as ROUTES from "../../constants/routes";
 import { withHistory } from "./history";
-import LoginModal from "../auth/LoginModal";
-import RegisterModal from "../auth/RegisterModal";
+import LoginDialog from "../auth/LoginDialog";
+import RegisterDialog from "../auth/RegisterDialog";
+import { connect } from 'react-redux';
 
 import MenuDrawer from "./MenuDrawer";
 
@@ -18,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   grow: {
     flexGrow: 1,
   },
-  appBar: {    
+  appBar: {
     backgroundColor: fade(theme.palette.secondary.main, 0.8)
   },
   title: {
@@ -122,24 +123,35 @@ function NavBar(props) {
             />
           </div>
           <div className={classes.grow} />
-          <LoginModal />
-          <RegisterModal />
-          <>
-            <IconButton
-              aria-label="show 4 new mails"
-              color="primary"
-              onClick={() => props.history.push(ROUTES.CHAT)}
-            >
-              <Badge badgeContent={4}>
-                <MailIcon />
-              </Badge>
-            </IconButton>
-            <MenuDrawer history={props.history} />
-          </>
+          {props.userToken === '' ?
+            <>
+              <LoginDialog />
+              <RegisterDialog />
+            </>
+            :
+            <>
+              <IconButton
+                aria-label="show 4 new mails"
+                color="primary"
+                onClick={() => props.history.push(ROUTES.CHAT)}
+              >
+                <Badge badgeContent={4}>
+                  <MailIcon />
+                </Badge>
+              </IconButton>
+              <MenuDrawer history={props.history} />
+            </>
+          }
         </Toolbar>
       </AppBar>
     </div>
   );
 }
 
-export default withHistory(NavBar);
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+
+export default connect(mapStateToProps)(withHistory(NavBar));

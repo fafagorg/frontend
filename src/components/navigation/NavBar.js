@@ -31,9 +31,9 @@ const useStyles = makeStyles((theme) => ({
   search: {
     position: "relative",
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.primary.main, 0.8),
+    backgroundColor: fade(theme.palette.primary.main, 0.5),
     "&:hover": {
-      backgroundColor: fade(theme.palette.primary.main, 0.95),
+      backgroundColor: fade(theme.palette.primary.main, 0.65),
     },
     marginRight: theme.spacing(2),
     marginLeft: 0,
@@ -114,7 +114,7 @@ function NavBar(props) {
               <SearchIcon />
             </div>
             <InputBase
-              placeholder="Search products"
+              placeholder="Search in all categories"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,

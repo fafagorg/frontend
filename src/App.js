@@ -39,7 +39,7 @@ class App extends React.Component {
       <ThemeProvider theme={theme}>
         <div className="App">
           <NavBar />
-          <div className="Router">
+          <div className="Router" align="center">
             <Router history={this.props.history}>
               <Route exact path={ROUTES.HOME} component={Home} />
               <Route exact path={ROUTES.SEARCH} component={Search} />

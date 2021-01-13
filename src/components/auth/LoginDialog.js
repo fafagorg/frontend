@@ -10,21 +10,6 @@ import * as AuthService from "../../services/auth";
 import Alert from '@material-ui/lab/Alert';
 import { connect } from 'react-redux';
 
-function mapStateToProps(state) {
-  return {
-    userToken: state.userToken
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    setUserToken: (token) => {
-      dispatch({ type: "SET_TOKEN", payload: token });
-    }
-  }
-}
-
-
 function LoginDialog(props) {
   // Dialog
   const [open, setOpen] = React.useState(false);
@@ -79,8 +64,9 @@ function LoginDialog(props) {
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Login</Button>
-
+      {!props.userToken &&
+        <Button onClick={handleClickOpen}>Login</Button>
+      }
       <Dialog
         open={open}
         onClose={handleClose}
@@ -142,5 +128,18 @@ function LoginDialog(props) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setUserToken: (token) => {
+      dispatch({ type: "SET_TOKEN", payload: token });
+    }
+  }
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginDialog);

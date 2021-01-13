@@ -123,12 +123,9 @@ function NavBar(props) {
             />
           </div>
           <div className={classes.grow} />
-          {props.userToken === '' ?
-            <>
-              <LoginDialog />
-              <RegisterDialog />
-            </>
-            :
+          <LoginDialog />
+          <RegisterDialog />
+          {props.userToken &&
             <>
               <IconButton
                 aria-label="show 4 new mails"

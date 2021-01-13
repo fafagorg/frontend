@@ -9,8 +9,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import * as AuthService from "../../services/auth";
 import Alert from '@material-ui/lab/Alert';
 import validator from 'validator'
+import { connect } from 'react-redux';
 
-export default function RegisterDialog() {
+function RegisterDialog(props) {
 
   //Dialog
   const [open, setOpen] = React.useState(false);
@@ -144,8 +145,18 @@ export default function RegisterDialog() {
         email: email,
         phone: phone
       }).then(res => {
-        setRegisterSucces("Registred correctly")
-        setRegisterError("")
+        AuthService.login({
+          username: username,
+          password: password
+        }).then(res => {
+          var token = res.token;
+          props.setUserToken(token);
+        }).catch(err => {
+          console.log(err);
+        });
+        setRegisterSucces("Registred correctly. This dialog will automatically close in 3 seconds.");
+        setRegisterError("");
+        setTimeout(() => handleClose(), 3000);
       }).catch(err => {
         setRegisterError("Username is already taken")
       })
@@ -156,7 +167,9 @@ export default function RegisterDialog() {
 
   return (
     <div>
-      <Button onClick={handleClickOpen}>Register</Button>
+      {!props.userToken &&
+        <Button onClick={handleClickOpen}>Register</Button>
+      }
       <Dialog
         open={open}
         onClose={handleClose}
@@ -168,7 +181,8 @@ export default function RegisterDialog() {
             <DialogContentText>
               Introduce your personal data, all inputs are required
           </DialogContentText>
-
+          {registerSucces.length === 0 &&
+          <>
             <TextField
               autoFocus
               error={usernameError.length !== 0}
@@ -247,6 +261,8 @@ export default function RegisterDialog() {
               type="text"
               fullWidth
             />
+            </>
+          }
 
 
             {registerError.length !== 0 &&
@@ -271,3 +287,19 @@ export default function RegisterDialog() {
     </div>
   );
 }
+
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setUserToken: (token) => {
+      dispatch({ type: "SET_TOKEN", payload: token });
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterDialog)

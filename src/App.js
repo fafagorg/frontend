@@ -42,7 +42,7 @@ class App extends React.Component {
             <Router history={this.props.history}>
               <Route exact path={ROUTES.HOME} component={Home} />
               <Route exact path={ROUTES.SEARCH} component={Search} />
-              {this.props.userToken !== '' &&
+              {this.props.userToken &&
                 <>
                   <Route exact path={ROUTES.CHAT} component={Messenger} />
                   <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />

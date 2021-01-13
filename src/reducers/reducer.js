@@ -1,5 +1,5 @@
 const defaultState = {
-    userToken: ''
+    userToken: undefined
 }
 
 function reducer(state=defaultState, action) {

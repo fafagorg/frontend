@@ -6,21 +6,24 @@ import Message from "../../components/messenger/message/Message";
 import Room from "../../components/messenger/room/Room";
 import * as MessengerServices from "../../services/messenger";
 import * as ClientService from "../../services/client";
+import { withHistory } from "../../components/navigation/history";
+import * as ROUTES from "../../constants/routes";
 
-export default class Messenger extends React.Component {
+class Messenger extends React.Component {
   constructor(props) {
     super(props);
 
-    this.roomId = window.location.pathname.replace('/chat', '').replace('/', '') || undefined
+    this.roomId = window.location.pathname.replace(ROUTES.CHAT, '').replace('/', '') || undefined
     // forbidden if is not your user
     if (this.roomId !== undefined && 
       (
-        (Number(this.roomId.split('-')[0]) !== ClientService.getJWT().data.userId && Number(this.roomId.split('-')[1]) !== ClientService.getJWT().data.userId) 
+        (this.roomId.split('-')[0] !== ClientService.getJWT().data.user.username && this.roomId.split('-')[1] !== ClientService.getJWT().data.user.username) 
         || 
-        Number(this.roomId.split('-')[0]) === Number(this.roomId.split('-')[1])
+        this.roomId.split('-')[0] === this.roomId.split('-')[1]
         )
       ) {
-      window.location.href = "/chat";
+      alert('El destinatario no existe');
+      this.props.history.push(ROUTES.CHAT);
     }
     
     this.state = { selectedRoomId: this.roomId, rooms: undefined, message: undefined };
@@ -38,6 +41,21 @@ export default class Messenger extends React.Component {
 
   async componentDidMount() {
     if (this.roomId !== undefined) {
+      try {
+        await MessengerServices.getMessages(this.roomId);
+      } catch(error) {
+        if(error.response.data.error === 'Invalid data user'){
+          alert('El destinatario no existe');
+          this.props.history.push("/chat");
+        }
+        if(error.response.data.error === 'Invalid data product'){
+          alert('El producto no existe');
+          this.props.history.push("/chat");
+        }
+      }
+    }
+
+    if (this.roomId !== undefined) {
       this.setState({ userInfo: await this.getUserInfo(this.getUserDifferent(this.roomId))}) // not work on constructor
     } else {
       this.setState({ userInfo: undefined})
@@ -48,7 +66,6 @@ export default class Messenger extends React.Component {
     this.websocket();
 
     // scroll bottom
-    
   }
 
   async getUserInfo(userId){
@@ -107,7 +124,7 @@ export default class Messenger extends React.Component {
         await this.getMessage(rooms[0].roomId);
 
         // select once room if I access by /chat url
-        this.setState({selectedRoomId: rooms[0].roomId, userInfo: this.getUserInfo(this.getUserDifferent(rooms[0].roomId))})
+        this.setState({selectedRoomId: rooms[0].roomId, userInfo: await this.getUserInfo(this.getUserDifferent(rooms[0].roomId))})
       } else if(rooms.length > 0 && this.state.selectedRoomId !== undefined) {
         await this.getMessage(this.state.selectedRoomId);
       } else if(rooms.length === 0) {
@@ -121,9 +138,18 @@ export default class Messenger extends React.Component {
   async getMessage(roomId) {
     try {
       let message = await MessengerServices.getMessages(roomId);
+      console.log(message)
       this.setState({ message: message });
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.error)
+      if(error.response.data.error === 'Invalid data user'){
+        alert('El destinatario no existe');
+        this.props.history.push(ROUTES.CHAT);
+      }
+      if(error.response.data.error === 'Invalid data product'){
+        alert('El producto no existe');
+        this.props.history.push(ROUTES.CHAT);
+      }
     }
   }
 
@@ -132,7 +158,11 @@ export default class Messenger extends React.Component {
   }
 
   getUserDifferent(roomId) {
-    return (roomId.split('-')[0]+""+roomId.split('-')[1]).replace(ClientService.getJWT().data.userId, '')
+    if (roomId.split('-')[0] === ClientService.getJWT().data.user.username) {
+      return roomId.split('-')[1]
+    } else {
+      return roomId.split('-')[0]
+    }
   }
   async sendMessage() {
     // not undefined content
@@ -166,13 +196,12 @@ export default class Messenger extends React.Component {
 
   async changeRoom(roomId) {
     await this.getMessage(roomId);
-    await this.readMessage(roomId);
 
     // new message to false
     let room = this.state.rooms.find((x) => x.roomId === roomId);
     room.newMessage = false;
 
-    this.setState({selectedRoomId: roomId, userInfo: this.getUserInfo(this.getUserDifferent(roomId)), rooms: this.state.rooms})
+    this.setState({selectedRoomId: roomId, userInfo: await this.getUserInfo(this.getUserDifferent(roomId)), rooms: this.state.rooms})
 
     // scroll bottom
     document.getElementById("messages").scrollTop = 10000000000;
@@ -195,7 +224,9 @@ export default class Messenger extends React.Component {
     try {
       await MessengerServices.modifyRoomName(roomId, {roomName: roomName});
       let rooms = await MessengerServices.getRooms(roomId);
-      this.setState({rooms: rooms})
+
+      message.roomName = roomName
+      this.setState({rooms: rooms, message: message})
     } catch (error) {
       console.log(error)
     }
@@ -246,7 +277,7 @@ export default class Messenger extends React.Component {
           </div>
           <div class="content">
             <div class="contact-profile">
-              {this.state.message !== undefined && this.state.userInfo !== undefined && (
+              {this.state.userInfo !== undefined && (
                 <>
                   <img src={this.state.userInfo.image} alt="" />
                   <p>{this.state.userInfo.userName}</p>
@@ -283,3 +314,5 @@ export default class Messenger extends React.Component {
     );
   }
 }
+
+export default withHistory(Messenger);

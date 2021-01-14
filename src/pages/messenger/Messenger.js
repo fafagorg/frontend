@@ -88,27 +88,41 @@ class Messenger extends React.Component {
 
     this.socket.on("private_message", async (data) => {
       if (this.state.selectedRoomId === data.roomId) {
-        // add message and room
-        let room = this.state.rooms.find((x) => x.roomId === data.roomId);
-        if (room === undefined && this.state.message === undefined) {
-          await this.getRooms();
+        // new room
+        if (this.state.rooms === undefined) {
+          let rooms = await MessengerServices.getRooms(this.props.token);
+          let message = await MessengerServices.getMessages(this.state.selectedRoomId, this.props.token);
+          rooms.map((x) => (x.newMessage = false));
+          this.setState({ rooms: rooms, message: message });
         } else {
-          let message = this.state.message;
-          message.messages.push({
-            content: data.content,
-            userId: data.userId,
-          });
+          // add message and room
+          let room = this.state.rooms.find((x) => x.roomId === data.roomId);
+          if (room !== undefined) {
+            let message = this.state.message;
+            message.messages.push({
+              content: data.content,
+              userId: data.userId,
+            });
 
-          // new message to false
-          room.newMessage = false;
+            // new message to false
+            room.newMessage = false;
 
-          this.setState({ message: message, rooms: this.state.rooms });
+            this.setState({ message: message, rooms: this.state.rooms });
+          }
         }
       } else {
         // new message to true
         let room = this.state.rooms.find((x) => x.roomId === data.roomId);
         if (room !== undefined) {
           room.newMessage = true;
+          this.setState({ rooms: this.state.rooms });
+        } else {
+          let rooms = await MessengerServices.getRooms(this.props.token);
+          let message = await MessengerServices.getMessages(this.state.selectedRoomId, this.props.token);
+          this.setState({ rooms: rooms, message: message });
+
+          let room = this.state.rooms.find((x) => x.roomId === data.roomId);
+          room.newMessage = false;
           this.setState({ rooms: this.state.rooms });
         }
       }
@@ -188,9 +202,18 @@ class Messenger extends React.Component {
     if (this.state.message === undefined || this.state.message.messages === []) await this.getRooms();
 
     // update last message
+      // new room
+      if (this.state.rooms === undefined) {
+        let rooms = await MessengerServices.getRooms(this.props.token);
+        let message = await MessengerServices.getMessages(this.state.selectedRoomId, this.props.token);
+        rooms.map((x) => (x.newMessage = false));
+        this.setState({ rooms: rooms, message: message });
+      }
     let room = this.state.rooms.find((x) => x.roomId === this.state.selectedRoomId);
-    room.lastMessage = this.content;
-    this.setState({ rooms: this.state.rooms });
+    if (room !== undefined) {
+      room.lastMessage = this.content;
+      this.setState({ rooms: this.state.rooms });
+    }
   }
 
   async changeRoom(roomId) {
@@ -222,7 +245,7 @@ class Messenger extends React.Component {
 
     try {
       await MessengerServices.modifyRoomName(roomId, {roomName: roomName}, this.props.token);
-      let rooms = await MessengerServices.getRooms(roomId, this.props.token);
+      let rooms = await MessengerServices.getRooms(this.props.token);
 
       message.roomName = roomName
       this.setState({rooms: rooms, message: message})

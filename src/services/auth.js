@@ -1,7 +1,7 @@
 import * as requestService from "./request";
 
-export const getUsers = async () => {
-    let request = await requestService.request('GET', `${process.env.REACT_APP_ENDPOINT_API_AUTH}/api/v1/users`, {}, {}, true);
+export const getUsers = async (token) => {
+    let request = await requestService.request('GET', `${process.env.REACT_APP_ENDPOINT_API_AUTH}/api/v1/users`, {}, {}, true,token);
     return request.data
   };
 

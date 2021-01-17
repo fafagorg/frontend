@@ -1,31 +1,26 @@
 import axios from "axios";
-import * as ClientService from "./client";
 import Cookies from "universal-cookie";
 
 // request('GET', `${endpoint}/user/${id}`, {}, {}, true);
-export const request = async (method, uri, data, headers, auth = true) => {
+export const request = async (method, uri, data, headers, auth = true, token) => {
   if (["GET", "DELETE"].includes(method)) {
     uri = serializeUrl(uri, data);
   }
 
   if (auth) {
-    const access_token = ClientService.getJWT().token;
+    const access_token = token;
     headers.Authorization = "Bearer " + access_token;
   }
 
   try {
-    return await axios.request({
+    let request = await axios.request({
       method: method,
       url: uri,
       data: data,
       headers: headers,
     });
+    return request
   } catch (error) {
-    const exp = JSON.parse(atob(new Cookies().get('access_token').split('.')[1])).exp * 1000;
-    if (new Date().getTime() >= exp) {
-      new Cookies().remove('access_token')
-      window.location.href = "/";
-    }
     throw error;
   }
 };

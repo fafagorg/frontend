@@ -3,8 +3,10 @@ import Product from './product.js';
 import Alert from './Alert.js';
 import NewProduct from './newProduct';
 import EditProduct from './EditProduct';
-import ProductsApi from './ProductApi';
 import * as ProductService from "../../services/product";
+import * as AuthService from "../../services/auth";
+
+
 
 
 /*import { makeStyles } from '@material-ui/core/styles';
@@ -18,7 +20,8 @@ class Products extends React.Component {
         this.state = {
             errorInfo: null,
             products: [],
-            isEditing: {}
+            isEditing: {},
+            userId: ''
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
@@ -26,20 +29,33 @@ class Products extends React.Component {
         this.addProduct = this.addProduct.bind(this);
     }
 
-    componentDidMount(){
+    async componentDidMount(){
       ProductService.getProducts()
       .then(
           (result) => {
               this.setState({
-                errorInfo: result
+                products: result
               })
           },
           (error) => {
               this.setState({
-                errorInfo: "Problem with connection to server" 
+                errorInfo:  error.toString()
               })
           }
       )
+      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTA4OTMwOTgsImV4cCI6MTYxMDk3OTQ5OH0.-MOgaxbtSEQaTi8kxf0dqHv0rk_TGEHiFFoJrd83b7Y')
+      .then(
+        (result) => {
+            this.setState({
+              userId: result.userId
+            })
+        },
+        (error) => {
+            this.setState({
+              errorInfo:  error.toString()
+            })
+        }
+    )
     }
 
     handleCancel(name, product){
@@ -64,19 +80,29 @@ class Products extends React.Component {
         const isEditing = Object.assign({}, prevState.isEditing);
         delete isEditing[name];
         
-        if (name === product.name) {
+      
           const products = prevState.products;
-          const pos = products.findIndex(p => p.name === product.name);
-          return {
-            products: [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)],
-            isEditing: isEditing
-          }
-        }
+          const pos = products.findIndex(p => p.id === product.id);
+      
+          let res = {isEditing: isEditing};
 
-        return {
-          errorInfo: "Cannot edit name"
-        }
+          if(product.seller === this.state.userId){
+            res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
+          }
+          return res;
+        
+
+
       })
+
+      if(product.seller !== this.state.userId){
+        this.setState({
+          errorInfo:  "You can not edit products that you do not own"
+        })
+      }else{
+
+        ProductService.editProduct(product.id,product);
+      }
     }
 
     handleEdit(product){
@@ -84,15 +110,26 @@ class Products extends React.Component {
           //const products = prevState.products;
           //if(!products.find(p => p.name === product.name)){
           //return ({
-            isEditing: {...prevState.isEditing, [product.name]: product}
+            isEditing: {...prevState.isEditing, [product.id]: product}
         }));
       //});
     }
 
     handleDelete(product) {
-      this.setState(prevState => ({
-        products: prevState.products.filter((p) => p.name !== product.name)
-      }))
+      if(product.seller !== this.state.userId){
+        this.setState({
+          errorInfo:  "You can not delete a product that you do not own"
+        })
+      }else{
+
+        ProductService.deleteProduct(product.id);
+        this.setState(prevState => ({
+          products: prevState.products.filter((p) => p.id !== product.id)
+        }))
+      }
+      
+
+
     }
 
     handleCloseError(){
@@ -102,12 +139,20 @@ class Products extends React.Component {
     }
 
     addProduct(product) {        
+        product.seller = this.state.userId;
+
+        product.id = Math.max(...this.state.products.map(p => {
+          return p.id;
+        })) +1;
+        ProductService.addProduct(product);
+
         this.setState(prevState => {
 
-            return({
-                products: [...prevState.products, product]
-            });          
-        });
+          return({
+              products: [...prevState.products, product]
+          });          
+      });
+
     }
 
 
@@ -166,21 +211,22 @@ class Products extends React.Component {
                     <th>Name</th>
                     <th>Price</th>
                     <th>Category</th>
+                    <th>Seller</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
             <NewProduct onAddProduct={this.addProduct}/>
             {this.state.products.map((product) => 
-                !this.state.isEditing[product.name] ?
-                <Product key={product.name} product = {product} 
+                !this.state.isEditing[product.id] ?
+                <Product key={product.id} product = {product} 
                   onEdit={this.handleEdit}
                   onDelete={this.handleDelete}/>
                 :
-                <EditProduct key={product.name} product = {this.state.isEditing[product.name]} 
-                  onCancel={this.handleCancel.bind(this, product.name)}
-                  onChange={this.handleChange.bind(this, product.name)}
-                  onSave={this.handleSave.bind(this, product.name)}/>
+                <EditProduct key={product.id} product = {this.state.isEditing[product.id]} 
+                  onCancel={this.handleCancel.bind(this, product.id)}
+                  onChange={this.handleChange.bind(this, product.id)}
+                  onSave={this.handleSave.bind(this, product.id)}/>
             )}
             </tbody>
             </table>

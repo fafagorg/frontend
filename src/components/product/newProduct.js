@@ -1,6 +1,4 @@
 import React from 'react';
-import * as AuthService from "../../services/auth";
-const userId = AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTA4OTMwOTgsImV4cCI6MTYxMDk3OTQ5OH0.-MOgaxbtSEQaTi8kxf0dqHv0rk_TGEHiFFoJrd83b7Y');
 
 class NewProduct extends React.Component {
     constructor(props) {

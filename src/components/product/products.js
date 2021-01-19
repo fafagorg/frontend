@@ -3,6 +3,7 @@ import Product from './product.js';
 import Alert from './Alert.js';
 import NewProduct from './newProduct';
 import EditProduct from './EditProduct';
+import FilterProduct from './filterProduct';
 import * as ProductService from "../../services/product";
 import * as AuthService from "../../services/auth";
 
@@ -21,12 +22,16 @@ class Products extends React.Component {
             errorInfo: null,
             products: [],
             isEditing: {},
-            userId: ''
+            userId: '',
+            exchangeRates: {},
+            currentRate: {EUR: 1}
+
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleCloseError = this.handleCloseError.bind(this);
         this.addProduct = this.addProduct.bind(this);
+        this.filterProduct = this.filterProduct.bind(this);
     }
 
     async componentDidMount(){
@@ -43,7 +48,7 @@ class Products extends React.Component {
               })
           }
       )
-      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTA4OTMwOTgsImV4cCI6MTYxMDk3OTQ5OH0.-MOgaxbtSEQaTi8kxf0dqHv0rk_TGEHiFFoJrd83b7Y')
+      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEwNTA0MTYsImV4cCI6MTYxMTEzNjgxNn0.hsDwyjEBJeEU30nh3_SgqCEIAYeCHNGxy4KEIqxVxdg')
       .then(
         (result) => {
             this.setState({
@@ -128,8 +133,6 @@ class Products extends React.Component {
         }))
       }
       
-
-
     }
 
     handleCloseError(){
@@ -155,56 +158,43 @@ class Products extends React.Component {
 
     }
 
+    filterProduct(filter) {        
+      ProductService.getProductsFiltered(filter.name,filter.priceMin,filter.priceMax,filter.category)
+      .then(
+          (result) => {
+               this.setState({
+                products: result
+              })
+          },
+          (error) => {
+              this.setState({
+                errorInfo:  error.toString()
+              })
+          }
+      )
 
-    /*render() {
-        const classes = makeStyles((theme) => ({
-            root: {
-              flexGrow: 1,
-            },
-            paper: {
-              padding: theme.spacing(1),
-              textAlign: 'center',
-              color: theme.palette.text.secondary,
-            },
-          }));;
-      
-        function FormRow() {
-          return (
-            <React.Fragment>
-              <Grid item xs={4}>
-                <Paper className={classes.paper}>item</Paper>
-              </Grid>
-              <Grid item xs={4}>
-                <Paper className={classes.paper}>item</Paper>
-              </Grid>
-              <Grid item xs={4}>
-                <Paper className={classes.paper}>item</Paper>
-              </Grid>
-            </React.Fragment>
-          );
-        }
-      
-        return (
-          <div className={classes.root}>
-            <Grid container spacing={1}>
-              <Grid container item xs={12} spacing={3}>
-                <FormRow />
-              </Grid>
-              <Grid container item xs={12} spacing={3}>
-                <FormRow />
-              </Grid>
-              <Grid container item xs={12} spacing={3}>
-                <FormRow />
-              </Grid>
-            </Grid>
-          </div>
-        );
-      }*/
+  }
 
     render() {
         return(
+          
         <div>
             <Alert message={this.state.errorInfo} onClose={this.handleCloseError}/>
+            <table className="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>PriceMax</th>
+                    <th>PriceMin</th>
+                    <th>Category</th>
+                    <th>Seller</th>
+                    <th>&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+            <FilterProduct onFilterProduct={this.filterProduct}/>
+            </tbody>
+            </table>
             <table className="table">
             <thead>
                 <tr>

@@ -4,6 +4,7 @@ import Alert from './Alert.js';
 import NewProduct from './newProduct';
 import EditProduct from './EditProduct';
 import ProductsApi from './ProductApi';
+import * as ProductService from "../../services/product";
 
 
 /*import { makeStyles } from '@material-ui/core/styles';
@@ -26,17 +27,16 @@ class Products extends React.Component {
     }
 
     componentDidMount(){
-      ProductsApi.getAllProducts()
+      ProductService.getProducts()
       .then(
           (result) => {
               this.setState({
-                products: result
+                errorInfo: result
               })
           },
           (error) => {
-            console.log(error);
               this.setState({
-                errorInfo: "Problem with connection to server" + error
+                errorInfo: "Problem with connection to server" 
               })
           }
       )

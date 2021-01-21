@@ -4,9 +4,12 @@ steps:
     args:
       - '-c'
       - |
-        /usr/bin/envsubst < .env.production.tmp > .env.production
+        /usr/bin/envsubst < .env.$BRANCH_NAME.tmp > .env.production
+        /usr/bin/envsubst < k8s/deployment.tmp.yaml > k8s/deployment.yaml
+        /usr/bin/envsubst < k8s/service.tmp.yaml > k8s/service.yaml
     env:
-      - "REACT_APP_ENDPOINT_API_MESSENGER=https://messenger-${BRANCH_NAME}-dot-fis-us.appspot.com"
+    - 'COMMIT=$COMMIT_SHA'
+    - 'BRANCH_NAME=$BRANCH_NAME'
 
   # Verify
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -15,12 +18,38 @@ steps:
       - '-c'
       - |
         cat .env.production
+        cat k8s/deployment.yaml
+        cat k8s/service.yaml
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '--file=Dockerfile_production', '--tag=gcr.io/fis-us/frontend:${COMMIT_SHA}', '.']
+    args: ['build', '--file=Dockerfile_production', '--tag=gcr.io/fis-us/frontend-$BRANCH_NAME:${COMMIT_SHA}', '.']
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/fis-us/frontend:${COMMIT_SHA}']
+    args: ['push', 'gcr.io/fis-us/frontend-$BRANCH_NAME:${COMMIT_SHA}']
 
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args: ['beta', 'run', 'deploy', 'frontend-${BRANCH_NAME}', '--port=80', '--platform=managed', '--region=europe-west1', '--image=gcr.io/fis-us/frontend:${COMMIT_SHA}', '--min-instances=0', '--max-instances=2', '--allow-unauthenticated',  '--set-env-vars=APP_PORT=80']
+  # kubectl apply
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        gcloud container clusters get-credentials cluster-1 --zone europe-west1-b --project fis-us
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=europe-west1-b
+      - CLOUDSDK_CONTAINER_CLUSTER=cluster-1
+
+  # kubectl rollout status
+  - name: 'gcr.io/cloud-builders/kubectl'
+    entrypoint: /bin/sh
+    args:
+      - '-c'
+      - |
+        gcloud container clusters get-credentials cluster-1 --zone europe-west1-b --project fis-us
+        kubectl rollout status deployment.apps/frontend-$BRANCH_NAME -n app
+    env:
+      - CLOUDSDK_COMPUTE_ZONE=europe-west1-b
+      - CLOUDSDK_CONTAINER_CLUSTER=cluster-1
+    
+timeout: 600s

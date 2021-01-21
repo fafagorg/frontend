@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-$BRANCH_NAME
+  namespace: app
+  labels:
+    app: frontend-$BRANCH_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-$BRANCH_NAME
+  template:
+    metadata:
+      labels:
+        app: frontend-$BRANCH_NAME
+    spec:
+      containers:
+      - name: frontend
+        image: gcr.io/fis-us/frontend-$BRANCH_NAME:$COMMIT
+        ports:
+        - containerPort: 8080

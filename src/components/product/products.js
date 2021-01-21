@@ -6,13 +6,8 @@ import EditProduct from './EditProduct';
 import FilterProduct from './filterProduct';
 import * as ProductService from "../../services/product";
 import * as AuthService from "../../services/auth";
+import Select from 'react-select';
 
-
-
-
-/*import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';*/
 
 
 class Products extends React.Component {
@@ -23,8 +18,8 @@ class Products extends React.Component {
             products: [],
             isEditing: {},
             userId: '',
-            exchangeRates: {},
-            currentRate: {EUR: 1}
+            exchangeRates: [{value: 5, label: "DOLARES"}, {label:"EUR",value: 1}],
+            currentRate: {label:"EUR",value: 1},
 
         };
         this.handleEdit = this.handleEdit.bind(this);
@@ -48,7 +43,7 @@ class Products extends React.Component {
               })
           }
       )
-      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEwNTA0MTYsImV4cCI6MTYxMTEzNjgxNn0.hsDwyjEBJeEU30nh3_SgqCEIAYeCHNGxy4KEIqxVxdg')
+      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEyMjA4MjAsImV4cCI6MTYxMTMwNzIyMH0.Yykb1Oyra8Gj9Moal2CdA1N4kgKrmZpyW15WHWBu4EQ')
       .then(
         (result) => {
             this.setState({
@@ -61,6 +56,21 @@ class Products extends React.Component {
             })
         }
     )
+
+    ProductService.getExchangeRates().then(
+      (result) => {
+        result.push({label:"EUR",value: 1})
+        this.setState({
+          exchangeRates: result
+        })
+      },
+      (error) => {
+        this.setState({
+          errorInfo:  error.toString()
+        })
+      }
+    )
+    
     }
 
     handleCancel(name, product){
@@ -80,6 +90,12 @@ class Products extends React.Component {
       }))
     }
 
+    handleChangeCurrency(currency){
+      this.setState(() => ({
+        currentRate: currency
+      }))
+    }
+
     handleSave(name, product){
       this.setState(prevState => {
         const isEditing = Object.assign({}, prevState.isEditing);
@@ -95,8 +111,6 @@ class Products extends React.Component {
             res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
           }
           return res;
-        
-
 
       })
 
@@ -147,7 +161,7 @@ class Products extends React.Component {
         product.id = Math.max(...this.state.products.map(p => {
           return p.id;
         })) +1;
-        ProductService.addProduct(product);
+        ProductService.addProduct(product, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEyMjA4MjAsImV4cCI6MTYxMTMwNzIyMH0.Yykb1Oyra8Gj9Moal2CdA1N4kgKrmZpyW15WHWBu4EQ' );
 
         this.setState(prevState => {
 
@@ -176,6 +190,7 @@ class Products extends React.Component {
   }
 
     render() {
+      
         return(
           
         <div>
@@ -187,7 +202,6 @@ class Products extends React.Component {
                     <th>PriceMax</th>
                     <th>PriceMin</th>
                     <th>Category</th>
-                    <th>Seller</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -202,6 +216,7 @@ class Products extends React.Component {
                     <th>Price</th>
                     <th>Category</th>
                     <th>Seller</th>
+                    <th>Current currency</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -209,15 +224,19 @@ class Products extends React.Component {
             <NewProduct onAddProduct={this.addProduct}/>
             {this.state.products.map((product) => 
                 !this.state.isEditing[product.id] ?
-                <Product key={product.id} product = {product} 
+                <Product key={product.id} product = {product} currentRate = {this.state.currentRate}
                   onEdit={this.handleEdit}
                   onDelete={this.handleDelete}/>
                 :
-                <EditProduct key={product.id} product = {this.state.isEditing[product.id]} 
+                <EditProduct key={product.id} product = {this.state.isEditing[product.id]}
                   onCancel={this.handleCancel.bind(this, product.id)}
                   onChange={this.handleChange.bind(this, product.id)}
                   onSave={this.handleSave.bind(this, product.id)}/>
             )}
+            <text><strong>Select the desired typed of currency: </strong></text>
+            <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+            
+
             </tbody>
             </table>
         </div>

@@ -1,14 +1,64 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+import ProductCard from "../../components/products/ProductCard"
+import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
 
-export default class Home extends React.Component {
+class Home extends React.Component {
   render() {
     return (
       <>
-      <Link to="/chat">Ir a chat</Link>
-      <br></br>
-      <Link to="/chat/1-2-4">Ir a chat del producto 4 del usuario 2</Link>
+        <div>
+          <Typography variant="h1" component="h2">
+            Fafago
+          </Typography>
+          <Typography variant="h4" gutterBottom>
+            Cuando haces pop, ya no hay stop.
+          </Typography>
+        </div>
+        <div style={{ backgroundColor: "#eeeeee" }}>
+          <Container maxWidth="lg">
+            <Grid container spacing={1}>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>
+              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
+                <ProductCard />
+              </Grid>              
+            </Grid>
+          </Container>
+        </div>
       </>
     );
   }
 }
+
+export default withRouter(Home)

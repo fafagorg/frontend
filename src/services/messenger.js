@@ -21,9 +21,10 @@ export const modifyRoomName = async (roomId, data) => {
 };
 
 export const getUserInfo = async (userId) => {
+  let request = await requestService.request('GET', `${process.env.REACT_APP_ENDPOINT_API_AUTH}/api/v1/users/string`, {}, {}, true);
   return {
-    userId:10,
-    userName: "Nombre usuario",
+    userId: request.data.username,
+    userName: request.data.name,
     image: "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png"
   }
 };

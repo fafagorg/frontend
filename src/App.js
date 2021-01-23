@@ -52,7 +52,7 @@ class App extends React.Component {
               {this.props.userToken &&
                 <>
                   <Route exact path={ROUTES.USER_PROFILE} component={Profile} />
-                  <Route exact path={ROUTES.REVIEWS} component={Reviews} />
+                  <Route path={ROUTES.REVIEWS + "/:listType" + "/:id"} component={Reviews} />
                   <Route exact path={ROUTES.CHAT} component={Messenger} />
                   <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
                 </>

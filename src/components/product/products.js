@@ -6,14 +6,16 @@ import EditProduct from './EditProduct';
 import FilterProduct from './filterProduct';
 import * as ProductService from "../../services/product";
 import * as AuthService from "../../services/auth";
+import Select from 'react-select';
+import jwt from "jsonwebtoken";
+import { connect } from "react-redux";
 
-
-
-
-/*import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';*/
-
+function stateToProps(state) {
+  return {
+    token: state.userToken,
+    data: jwt.decode(state.userToken),
+  }
+}
 
 class Products extends React.Component {
     constructor(props) {
@@ -23,8 +25,10 @@ class Products extends React.Component {
             products: [],
             isEditing: {},
             userId: '',
-            exchangeRates: {},
-            currentRate: {EUR: 1}
+            exchangeRates: [{value: 5, label: "DOLARES"}, {label:"EUR",value: 1}],
+            currentRate: {label:"EUR",value: 1},
+            token: props.token,
+            bannedWords: ['ticket','spam','pikachu','date']
 
         };
         this.handleEdit = this.handleEdit.bind(this);
@@ -48,7 +52,7 @@ class Products extends React.Component {
               })
           }
       )
-      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEwNTA0MTYsImV4cCI6MTYxMTEzNjgxNn0.hsDwyjEBJeEU30nh3_SgqCEIAYeCHNGxy4KEIqxVxdg')
+      AuthService.getUser(this.state.token)
       .then(
         (result) => {
             this.setState({
@@ -61,6 +65,21 @@ class Products extends React.Component {
             })
         }
     )
+
+    ProductService.getExchangeRates().then(
+      (result) => {
+        result.push({label:"EUR",value: 1})
+        this.setState({
+          exchangeRates: result
+        })
+      },
+      (error) => {
+        this.setState({
+          errorInfo:  error.toString()
+        })
+      }
+    )
+    
     }
 
     handleCancel(name, product){
@@ -80,33 +99,45 @@ class Products extends React.Component {
       }))
     }
 
+    handleChangeCurrency(currency){
+      this.setState(() => ({
+        currentRate: currency
+      }))
+    }
+
     handleSave(name, product){
-      this.setState(prevState => {
-        const isEditing = Object.assign({}, prevState.isEditing);
-        delete isEditing[name];
-        
       
-          const products = prevState.products;
-          const pos = products.findIndex(p => p.id === product.id);
-      
-          let res = {isEditing: isEditing};
-
-          if(product.seller === this.state.userId){
-            res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
-          }
-          return res;
-        
-
-
-      })
-
       if(product.seller !== this.state.userId){
         this.setState({
           errorInfo:  "You can not edit products that you do not own"
         })
+      }else if(isNaN(product.price)){
+        this.setState({
+          errorInfo:  "Price must be a number"
+        })
+      }else if(this.state.bannedWords.filter((b) => { return product.name.includes(b) }).length > 0 || this.state.bannedWords.filter((b) => { return product.category.includes(b) }).length > 0){
+        this.setState({
+          errorInfo:  "Banned word used in name or category"
+        })
       }else{
+        this.setState(prevState => {
+          const isEditing = Object.assign({}, prevState.isEditing);
+          delete isEditing[name];
+          
+        
+            const products = prevState.products;
+            const pos = products.findIndex(p => p.id === product.id);
+        
+            let res = {isEditing: isEditing};
+  
+            if(product.seller === this.state.userId){
+              res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
+            }
+            return res;
+  
+        })
 
-        ProductService.editProduct(product.id,product);
+        ProductService.editProduct(product.id,product, this.state.token);
       }
     }
 
@@ -127,7 +158,7 @@ class Products extends React.Component {
         })
       }else{
 
-        ProductService.deleteProduct(product.id);
+        ProductService.deleteProduct(product.id, this.state.token);
         this.setState(prevState => ({
           products: prevState.products.filter((p) => p.id !== product.id)
         }))
@@ -141,21 +172,31 @@ class Products extends React.Component {
         })
     }
 
-    addProduct(product) {        
+    addProduct(product) {
+      if(isNaN(product.price)){
+        this.setState({
+          errorInfo:  "Price must be a number"
+        })
+      }else if(this.state.bannedWords.filter((b) => { return product.name.includes(b) }).length > 0 || this.state.bannedWords.filter((b) => { return product.category.includes(b) }).length > 0){
+        this.setState({
+          errorInfo:  "Banned word used in name or category"
+        })
+      }else{
+
         product.seller = this.state.userId;
 
         product.id = Math.max(...this.state.products.map(p => {
           return p.id;
         })) +1;
-        ProductService.addProduct(product);
+        ProductService.addProduct(product, this.state.token );
 
         this.setState(prevState => {
 
           return({
               products: [...prevState.products, product]
           });          
-      });
-
+        });
+      }
     }
 
     filterProduct(filter) {        
@@ -176,6 +217,7 @@ class Products extends React.Component {
   }
 
     render() {
+      
         return(
           
         <div>
@@ -187,7 +229,6 @@ class Products extends React.Component {
                     <th>PriceMax</th>
                     <th>PriceMin</th>
                     <th>Category</th>
-                    <th>Seller</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -202,6 +243,7 @@ class Products extends React.Component {
                     <th>Price</th>
                     <th>Category</th>
                     <th>Seller</th>
+                    <th>Current currency</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>
@@ -209,15 +251,19 @@ class Products extends React.Component {
             <NewProduct onAddProduct={this.addProduct}/>
             {this.state.products.map((product) => 
                 !this.state.isEditing[product.id] ?
-                <Product key={product.id} product = {product} 
+                <Product key={product.id} product = {product} currentRate = {this.state.currentRate}
                   onEdit={this.handleEdit}
                   onDelete={this.handleDelete}/>
                 :
-                <EditProduct key={product.id} product = {this.state.isEditing[product.id]} 
+                <EditProduct key={product.id} product = {this.state.isEditing[product.id]}
                   onCancel={this.handleCancel.bind(this, product.id)}
                   onChange={this.handleChange.bind(this, product.id)}
                   onSave={this.handleSave.bind(this, product.id)}/>
             )}
+            <text><strong>Select the desired typed of currency: </strong></text>
+            <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+            
+
             </tbody>
             </table>
         </div>
@@ -229,4 +275,4 @@ class Products extends React.Component {
 
 
 
-export default Products;
+export default connect(stateToProps)(Products);

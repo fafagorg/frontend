@@ -3,16 +3,7 @@ import Product from './product.js';
 import Alert from './Alert.js';
 import * as ProductService from "../../services/product";
 import Select from 'react-select';
-import jwt from "jsonwebtoken";
-import { connect } from "react-redux";
-import * as AuthService from "../../services/auth";
 
-function stateToProps(state) {
-  return {
-    token: state.userToken,
-    data: jwt.decode(state.userToken),
-  }
-}
 
 
 class Products extends React.Component {
@@ -23,45 +14,28 @@ class Products extends React.Component {
             products: [],
             exchangeRates: [],
             currentRate: {label:"EUR",value: 1},
-            idProduct: window.location.search.replace("?id=", ""),
-            username: "",
-            token: props.token
-
+            username: window.location.search.replace("?username=", "")
 
         };
     }
 
     async componentDidMount(){
-
-      AuthService.getUser(this.state.token)
-      .then(
-        (result) => {
-            this.setState({
-              username: result.userId
-            })
-        },
-        (error) => {
-            this.setState({
-              errorInfo:  error.toString()
-            })
-        }
-    )
-
-      if(this.state.idProduct){
-        ProductService.getProductById(this.state.idProduct)
+      if(this.state.username){
+        ProductService.getClientProducts(this.state.username)
         .then(
-            (result) => {
-                this.setState({
-                  products: result
-                })
-            },
-            (error) => {
-                this.setState({
-                  errorInfo:  error.toString()
-                })
-            }
+          (result) => {
+              this.setState({
+                products: result
+              })
+          },
+          (error) => {
+              this.setState({
+                errorInfo:  error.toString()
+              })
+          }
         )
       }
+      
 
       ProductService.getExchangeRates().then(
         (result) => {
@@ -104,7 +78,7 @@ class Products extends React.Component {
             </thead>
             <tbody>
             {this.state.products.map((product) => 
-                <Product key={product.id} product = {product} currentRate = {this.state.currentRate} hidden={true} chat={true} username={this.state.username}/>
+                <Product key={product.id} product = {product} currentRate = {this.state.currentRate} hidden={true} />
             )}
             <text><strong>Select the desired typed of currency: </strong></text>
             <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
@@ -120,4 +94,4 @@ class Products extends React.Component {
 
 
 
-export default connect(stateToProps)(Products);
+export default Products;

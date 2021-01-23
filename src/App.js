@@ -6,6 +6,7 @@ import Messenger from "./pages/messenger/Messenger";
 import Profile from "./pages/profile/Profile";
 import Search from "./pages/products/Search";
 import Product from "./pages/singleProduct/Product";
+import ClientProducts from "./pages/clientProducts/Product";
 import Home from "./pages/home/Home";
 import './bootstrap.min.css';
 
@@ -46,6 +47,7 @@ class App extends React.Component {
               <Route exact path={ROUTES.HOME} component={Home} />
               <Route exact path={ROUTES.SEARCH} component={Search} />
               <Route exact path={ROUTES.PRODUCT} component={Product} />
+              <Route exact path={ROUTES.CLIENTPRODUCTS} component={ClientProducts} />
               {this.props.userToken &&
                 <>
                   <Route exact path={ROUTES.USER_PROFILE} component={Profile} />

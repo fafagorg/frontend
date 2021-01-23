@@ -7,8 +7,15 @@ import FilterProduct from './filterProduct';
 import * as ProductService from "../../services/product";
 import * as AuthService from "../../services/auth";
 import Select from 'react-select';
+import jwt from "jsonwebtoken";
+import { connect } from "react-redux";
 
-
+function stateToProps(state) {
+  return {
+    token: state.userToken,
+    data: jwt.decode(state.userToken),
+  }
+}
 
 class Products extends React.Component {
     constructor(props) {
@@ -20,6 +27,8 @@ class Products extends React.Component {
             userId: '',
             exchangeRates: [{value: 5, label: "DOLARES"}, {label:"EUR",value: 1}],
             currentRate: {label:"EUR",value: 1},
+            token: props.token,
+            bannedWords: ['ticket','spam','pikachu','date']
 
         };
         this.handleEdit = this.handleEdit.bind(this);
@@ -43,7 +52,7 @@ class Products extends React.Component {
               })
           }
       )
-      AuthService.getUser('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEyMjA4MjAsImV4cCI6MTYxMTMwNzIyMH0.Yykb1Oyra8Gj9Moal2CdA1N4kgKrmZpyW15WHWBu4EQ')
+      AuthService.getUser(this.state.token)
       .then(
         (result) => {
             this.setState({
@@ -97,30 +106,38 @@ class Products extends React.Component {
     }
 
     handleSave(name, product){
-      this.setState(prevState => {
-        const isEditing = Object.assign({}, prevState.isEditing);
-        delete isEditing[name];
-        
       
-          const products = prevState.products;
-          const pos = products.findIndex(p => p.id === product.id);
-      
-          let res = {isEditing: isEditing};
-
-          if(product.seller === this.state.userId){
-            res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
-          }
-          return res;
-
-      })
-
       if(product.seller !== this.state.userId){
         this.setState({
           errorInfo:  "You can not edit products that you do not own"
         })
+      }else if(isNaN(product.price)){
+        this.setState({
+          errorInfo:  "Price must be a number"
+        })
+      }else if(this.state.bannedWords.filter((b) => { return product.name.includes(b) }).length > 0 || this.state.bannedWords.filter((b) => { return product.category.includes(b) }).length > 0){
+        this.setState({
+          errorInfo:  "Banned word used in name or category"
+        })
       }else{
+        this.setState(prevState => {
+          const isEditing = Object.assign({}, prevState.isEditing);
+          delete isEditing[name];
+          
+        
+            const products = prevState.products;
+            const pos = products.findIndex(p => p.id === product.id);
+        
+            let res = {isEditing: isEditing};
+  
+            if(product.seller === this.state.userId){
+              res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
+            }
+            return res;
+  
+        })
 
-        ProductService.editProduct(product.id,product);
+        ProductService.editProduct(product.id,product, this.state.token);
       }
     }
 
@@ -141,7 +158,7 @@ class Products extends React.Component {
         })
       }else{
 
-        ProductService.deleteProduct(product.id);
+        ProductService.deleteProduct(product.id, this.state.token);
         this.setState(prevState => ({
           products: prevState.products.filter((p) => p.id !== product.id)
         }))
@@ -155,21 +172,31 @@ class Products extends React.Component {
         })
     }
 
-    addProduct(product) {        
+    addProduct(product) {
+      if(isNaN(product.price)){
+        this.setState({
+          errorInfo:  "Price must be a number"
+        })
+      }else if(this.state.bannedWords.filter((b) => { return product.name.includes(b) }).length > 0 || this.state.bannedWords.filter((b) => { return product.category.includes(b) }).length > 0){
+        this.setState({
+          errorInfo:  "Banned word used in name or category"
+        })
+      }else{
+
         product.seller = this.state.userId;
 
         product.id = Math.max(...this.state.products.map(p => {
           return p.id;
         })) +1;
-        ProductService.addProduct(product, 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQ0NzE2ODU2MzllNDczYmQ4MmQ4OSIsInVzZXJuYW1lIjoiYWxmcGFiIiwibmFtZSI6ImFsZnBhYiIsInN1cm5hbWUiOiJhbGZwYWIiLCJlbWFpbCI6ImFsZnBhYkBhbGZwYWIuY29tIiwicGhvbmUiOiI2NjYwMDAwMDAiLCJfX3YiOjB9LCJpYXQiOjE2MTEyMjA4MjAsImV4cCI6MTYxMTMwNzIyMH0.Yykb1Oyra8Gj9Moal2CdA1N4kgKrmZpyW15WHWBu4EQ' );
+        ProductService.addProduct(product, this.state.token );
 
         this.setState(prevState => {
 
           return({
               products: [...prevState.products, product]
           });          
-      });
-
+        });
+      }
     }
 
     filterProduct(filter) {        
@@ -248,4 +275,4 @@ class Products extends React.Component {
 
 
 
-export default Products;
+export default connect(stateToProps)(Products);

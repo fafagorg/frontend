@@ -321,7 +321,7 @@ class Messenger extends React.Component {
               <ul>
                 {this.state.message !== undefined &&
                   this.state.message.messages.map((data, i) => (
-                    <Message data={data} key={i} />
+                    <Message dataa={data} key={i} />
                   ))}
               </ul>
             </div>

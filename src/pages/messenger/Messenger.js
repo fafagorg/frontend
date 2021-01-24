@@ -14,7 +14,7 @@ class Messenger extends React.Component {
   constructor(props) {
     super(props);
 
-    this.roomId = window.location.pathname.replace(ROUTES.CHAT, '').replace('/', '') || undefined
+    this.roomId = window.location.search.replace(ROUTES.CHAT, '').replace('?roomId=', '') || undefined
     // forbidden if is not your user
     if (this.roomId !== undefined && 
       (
@@ -209,6 +209,7 @@ class Messenger extends React.Component {
       })
       this.setState({message: this.state.message})
     }
+
     // new conversation
     if (this.state.message === undefined || this.state.message.messages === []) await this.getRooms();
 
@@ -278,16 +279,6 @@ class Messenger extends React.Component {
       />
         <div id="frame">
           <div id="sidepanel">
-            <div id="bottom-bar">
-              <button>
-                <i class="far fa-newspaper"></i>{" "}
-                <span>
-                  <Link class="link" to="/">
-                    See products
-                  </Link>
-                </span>
-              </button>
-            </div>
             <div id="contacts">
               <ul>
                 {this.state.rooms !== undefined &&
@@ -321,7 +312,7 @@ class Messenger extends React.Component {
               <ul>
                 {this.state.message !== undefined &&
                   this.state.message.messages.map((data, i) => (
-                    <Message data={data} key={i} />
+                    <Message dataa={data} key={i} />
                   ))}
               </ul>
             </div>

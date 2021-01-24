@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 
 function Product(props){
     return(
         
     <tr>
         {!props.hidden &&
-        <td><a href={"/product/?id="+ props.product.id}>{props.product.name}</a></td>
+        <td><Link class="link" style={{ color: '#00F' }} to={"/product?id="+ props.product.id}>{props.product.name}</Link></td>
         }
         {props.hidden &&
         <td>{props.product.name}</td>
@@ -13,7 +14,7 @@ function Product(props){
         <td>{props.product.price * props.currentRate.value}</td>
         <td>{props.product.category}</td>
         {!props.hideLink &&
-        <td><a href={"/product/client/?username="+ props.product.seller}>{props.product.seller}</a></td>
+        <td><Link class="link" style={{ color: '#00F' }} to={"/product_client?username="+ props.product.seller}>{props.product.seller}</Link></td>
         }
         {props.hideLink &&
         <td>{props.product.seller}</td>

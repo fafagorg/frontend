@@ -1,13 +1,15 @@
 import React from 'react';
 import Product from './product.js';
 import Alert from './Alert.js';
-import NewProduct from './newProduct';
 import FilterProduct from './filterProduct';
 import * as ProductService from "../../services/product";
 import * as AuthService from "../../services/auth";
 import Select from 'react-select';
 import jwt from "jsonwebtoken";
 import { connect } from "react-redux";
+import Grid from '@material-ui/core/Grid';
+import Container from '@material-ui/core/Container';
+
 
 function stateToProps(state) {
   return {
@@ -36,10 +38,10 @@ class Products extends React.Component {
     }
 
     async componentDidMount(){
-      ProductService.getProducts()
+      ProductService.getProductsFiltered("","","",window.location.search.replace("?category=", ""))
       .then(
           (result) => {
-              this.setState({
+               this.setState({
                 products: result
               })
           },
@@ -140,44 +142,39 @@ class Products extends React.Component {
           
         <div>
             <Alert message={this.state.errorInfo} onClose={this.handleCloseError}/>
-            <table className="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>PriceMax</th>
-                    <th>PriceMin</th>
-                    <th>Category</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-            <FilterProduct onFilterProduct={this.filterProduct}/>
-            </tbody>
-            </table>
-            <table className="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Seller</th>
-                    <th>Current currency</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-            {this.state.token &&
-            <NewProduct onAddProduct={this.addProduct}/>
-            }
+            <div style={{width: "80%"}}>
+              <table className="table">
+              <thead>
+                  <tr>
+                      <th>Name</th>
+                      <th>PriceMax</th>
+                      <th>PriceMin</th>
+                      <th>Category</th>
+                      <th>&nbsp;</th>
+                  </tr>
+              </thead>
+              <tbody>
+              <FilterProduct onFilterProduct={this.filterProduct}/>
+              </tbody>
+              </table>
+            </div>
+            <div style={{ backgroundColor: "#eeeeee" }}>
+            <Container maxWidth="lg">
+            <Grid container spacing={1}>
             {this.state.products.map((product) => 
               <Product key={product.id} product = {product} currentRate = {this.state.currentRate}  chat={this.state.token} username={this.state.userId} noEdit={true}/>
             )}
-            <text><strong>Select the desired typed of currency: </strong></text>
+            </Grid>
+            </Container>
+            </div>
+            <hr/>
+            <div style={{width: "30%"}}>
+            <text ><strong>Select the desired typed of currency to show: </strong></text>
             <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+            </div>
             
 
-            </tbody>
-            </table>
+         
         </div>
         
         

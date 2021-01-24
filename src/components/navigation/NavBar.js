@@ -95,6 +95,10 @@ const useStyles = makeStyles((theme) => ({
 
 function NavBar(props) {
   const classes = useStyles();
+  let hola = "";
+  function handleChange(event) {
+    hola = event.target.value
+  }
 
   return (
     <div className={classes.grow}>
@@ -109,20 +113,32 @@ function NavBar(props) {
           >
             売
           </IconButton>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
+          <div className={classes.search} >
+            <div className={classes.searchIcon} >
+              <SearchIcon  />
             </div>
-            <InputBase
-              placeholder="Search in all categories"
+            <InputBase style={{ color: '#000' }}
+              placeholder="Search products"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
+              onChange={handleChange}
             />
           </div>
           <div className={classes.grow} />
+          <IconButton
+                aria-label="search"
+                color="primary"
+                onClick={() =>{ props.history.push("/nada"); setTimeout(() => {
+                  props.history.push(ROUTES.SEARCH + "?category="+ hola)
+                }, 1); }}
+              >
+              
+                  <SearchIcon />
+            
+              </IconButton>
           <LoginDialog />
           <RegisterDialog />
           {props.userToken &&
@@ -144,6 +160,8 @@ function NavBar(props) {
     </div>
   );
 }
+
+
 
 function mapStateToProps(state) {
   return {

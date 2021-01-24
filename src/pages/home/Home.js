@@ -1,11 +1,37 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
-import ProductCard from "../../components/products/ProductCard"
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
+import Product from '../../components/product/product.js';
+import * as ProductService from "../../services/product";
 
 class Home extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+        errorInfo: null,
+        products: [],
+
+    };
+  }
+
+  async componentDidMount(){
+    ProductService.getProducts()
+      .then(
+          (result) => {
+              this.setState({
+                products: result
+              })
+          },
+          (error) => {
+              this.setState({
+                errorInfo:  error.toString()
+              })
+          }
+      )
+  }
   render() {
     return (
       <>
@@ -20,39 +46,9 @@ class Home extends React.Component {
         <div style={{ backgroundColor: "#eeeeee" }}>
           <Container maxWidth="lg">
             <Grid container spacing={1}>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>
-              <Grid Item lg={3} md={4} sm={6} xs={12} style={{padding:10}}>
-                <ProductCard />
-              </Grid>              
+            {this.state.products.map((product) => 
+              <Product key={product.id} product = {product} currentRate = {{value: 1}}  chat={this.state.token} username={this.state.userId} noEdit={true}/>
+            )}    
             </Grid>
           </Container>
         </div>

@@ -26,7 +26,7 @@ export const editProduct = async (productId,data, token) => {
 };
 
 export const deleteProduct = async (productId, token) => {
-  let request = await requestService.request('DELETE', process.env.REACT_APP_ENDPOINT_API_PRODUCT+`/api/v1/products/${productId}`, {}, true, token);
+  let request = await requestService.request('DELETE', process.env.REACT_APP_ENDPOINT_API_PRODUCT+`/api/v1/products/${productId}`,{}, {}, true, token);
   return request.data
 };
 

@@ -2,6 +2,7 @@ import React from "react";
 import "./Message.css";
 import { connect } from "react-redux";
 import jwt from "jsonwebtoken";
+import { withHistory } from "../../../components/navigation/history";
 
 class Message extends React.Component {
   render() {
@@ -21,4 +22,4 @@ function stateToProps(state) {
     dataa: jwt.decode(state.userToken),
   }
 }
-export default connect(stateToProps)(Message);
+export default connect(stateToProps)(withHistory(Message));

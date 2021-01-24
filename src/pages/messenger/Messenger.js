@@ -14,7 +14,7 @@ class Messenger extends React.Component {
   constructor(props) {
     super(props);
 
-    this.roomId = window.location.pathname.replace(ROUTES.CHAT, '').replace('?roomId=', '') || undefined
+    this.roomId = window.location.search.replace(ROUTES.CHAT, '').replace('?roomId=', '') || undefined
     // forbidden if is not your user
     if (this.roomId !== undefined && 
       (

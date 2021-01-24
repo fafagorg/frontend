@@ -279,16 +279,6 @@ class Messenger extends React.Component {
       />
         <div id="frame">
           <div id="sidepanel">
-            <div id="bottom-bar">
-              <button>
-                <i class="far fa-newspaper"></i>{" "}
-                <span>
-                  <Link class="link" to="/">
-                    See products
-                  </Link>
-                </span>
-              </button>
-            </div>
             <div id="contacts">
               <ul>
                 {this.state.rooms !== undefined &&

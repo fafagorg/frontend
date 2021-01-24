@@ -85,7 +85,6 @@
 #frame #sidepanel #contacts {
   overflow-y: scroll;
   overflow-x: hidden;
-  padding-top: 40px;
 }
 
 @media screen and (max-width: 735px) {

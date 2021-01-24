@@ -194,6 +194,7 @@ class Messenger extends React.Component {
   async sendMessage() {
     // not undefined content
     if(this.content === undefined || this.content === "") return;
+    this.content = "";
 
     this.socket.emit("send_message", {
       userId: this.getUserDifferent(this.state.selectedRoomId),

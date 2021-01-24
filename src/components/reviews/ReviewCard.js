@@ -11,12 +11,8 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { red } from '@material-ui/core/colors';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Rating from '@material-ui/lab/Rating';
-import Box from '@material-ui/core/Box';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 const useStyles = makeStyles((theme) => ({
@@ -47,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function RecipeReviewCard(props) {
   const review = props.review
+  let reviewIcon = '';
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
@@ -61,6 +58,19 @@ export default function RecipeReviewCard(props) {
     comments.push(<Typography paragraph>{comment.body} </Typography>);
   }
 
+  if (review.externalScore === 'Neutral'){
+    reviewIcon = "😐";
+  } else if (review.externalScore === 'Positive'){
+    reviewIcon = "😀";
+  } else if (review.externalScore === 'Verypositive'){
+    reviewIcon = "🥳";
+  } else  if (review.externalScore === 'Negative'){
+    reviewIcon = "😠";
+  } else  if (review.externalScore === 'Verynegative'){
+    reviewIcon = "💩";
+  } else {
+    reviewIcon = "👽";
+  }
 
   return (
     <Card className={classes.root}>
@@ -72,7 +82,9 @@ export default function RecipeReviewCard(props) {
           </Avatar>
        
         }
+        
         action={
+          <div>
           <Rating
             name="customized-empty"
             defaultValue={4}
@@ -81,7 +93,11 @@ export default function RecipeReviewCard(props) {
             precision={1}
             emptyIcon={<StarBorderIcon fontSize="inherit" />}
           />
+         <br></br>
+         {reviewIcon}
+          </div>
         }
+        
         title={review.title}
         subheader={new Intl.DateTimeFormat("en-GB", {
           year: "numeric",

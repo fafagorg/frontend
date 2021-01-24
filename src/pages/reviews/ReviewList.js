@@ -7,6 +7,7 @@ import * as ROUTES from "../../constants/routes";
 import { withStyles } from '@material-ui/core/styles';
 import Rating from '@material-ui/lab/Rating';
 import ReviewsApi from './ReviewsApi.js';
+import { connect } from 'react-redux'
 
 
 
@@ -44,7 +45,17 @@ class Review extends React.Component {
 
   async loadReviews() {
     try {
-      let result = await ReviewsApi.getAllReviews();
+      let result;
+      if (this.type == 'client' || this.type == 'product') {
+        result = await ReviewsApi.getReviewsByTypeAndId(this.type, this.id);
+      }
+      else {
+        this.setState({
+          reviews: [],
+          errorInfo: "Type " + this.type + " not compatible"
+        });
+        return;
+      }
       this.setState({
         reviews: result
       });
@@ -66,6 +77,17 @@ class Review extends React.Component {
       });
       return false;
     }
+    if (review.description === '') {
+      this.setState({
+        errorInfo: "Description cannot be empty"
+      });
+      return false;
+    }
+    if (this.type == "product") {
+      review.reviewedProductId = this.id
+    } else if (this.type == "client") {
+      review.reviewedClientId = this.id
+    }
 
     if (Number(review.score) < 1 || Number(review.score) > 5) {
       this.setState({
@@ -75,10 +97,19 @@ class Review extends React.Component {
     }
 
     try {
-      await ReviewsApi.postReview(review)
+      let containBadWords = await ReviewsApi.checkBadWords(review);
+      if (!containBadWords) {
+        await ReviewsApi.postReview(this.props.userToken, review)
+      } else {
+        this.setState({
+          errorInfo: "Your review contains bad words. Please be polite."
+        });
+        return false;
+      }
+
     } catch (error) {
       this.setState({
-        errorInfo: "There was an error adding review"
+        errorInfo: "There was an error adding review" + error
       });
     }
 
@@ -91,9 +122,9 @@ class Review extends React.Component {
 
   handleCloseError() {
     this.setState({
-        errorInfo: null
+      errorInfo: null
     });
-}
+  }
 
 
   render() {
@@ -116,4 +147,11 @@ class Review extends React.Component {
   }
 }
 
-export default Review;
+
+
+function mapStateToProps(state) {
+  return {
+    userToken: state.userToken
+  }
+}
+export default connect(mapStateToProps)(Review);

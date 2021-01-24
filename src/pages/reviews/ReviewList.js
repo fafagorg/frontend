@@ -1,15 +1,11 @@
 import React from "react";
 
-
-import RecipeReviewCard from './ReviewCard'
-
-
+import RecipeReviewCard from '../../components/reviews/ReviewCard'
+import Alert from '../../components/reviews/Alert.js';
+import NewReview from '../../components/reviews/NewReview.js';
 import * as ROUTES from "../../constants/routes";
-
 import { withStyles } from '@material-ui/core/styles';
 import Rating from '@material-ui/lab/Rating';
-import Alert from './Alert.js';
-import NewReview from './NewReview.js';
 import ReviewsApi from './ReviewsApi.js';
 
 

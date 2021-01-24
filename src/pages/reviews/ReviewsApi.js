@@ -1,5 +1,5 @@
 class ReviewsApi {
-    static API_BASE_URL = "http://localhost:8080/api/v1";
+    static API_BASE_URL = process.env.REACT_APP_ENDPOINT_API_REVIEWS + '/api/v1';
 
     static requestHeaders(auth) {
         return auth ? {

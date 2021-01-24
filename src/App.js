@@ -8,6 +8,7 @@ import Search from "./pages/products/Search";
 import Product from "./pages/singleProduct/Product";
 import ClientProducts from "./pages/clientProducts/Product";
 import Home from "./pages/home/Home";
+import Reviews from "./pages/reviews/ReviewList";
 import './bootstrap.min.css';
 
 
@@ -51,8 +52,8 @@ class App extends React.Component {
               {this.props.userToken &&
                 <>
                   <Route exact path={ROUTES.USER_PROFILE} component={Profile} />
+                  <Route path={ROUTES.REVIEWS + "/:listType" + "/:id"} component={Reviews} />
                   <Route exact path={ROUTES.CHAT} component={Messenger} />
-                  <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
                 </>
               }
             </Router>

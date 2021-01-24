@@ -144,11 +144,10 @@ function NavBar(props) {
           {props.userToken &&
             <>
               <IconButton
-                aria-label="show 4 new mails"
                 color="primary"
                 onClick={() => props.history.push(ROUTES.CHAT)}
               >
-                <Badge badgeContent={4}>
+                <Badge>
                   <MailIcon />
                 </Badge>
               </IconButton>

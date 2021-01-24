@@ -25,6 +25,6 @@ export const getUserInfo = async (userId, token) => {
   return {
     userId: request.data.username,
     userName: request.data.name,
-    image: "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png"
+    image: request.data.photo === "" ? "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png" : request.data.photo,
   }
 };

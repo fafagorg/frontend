@@ -52,7 +52,6 @@ class App extends React.Component {
                 <>
                   <Route exact path={ROUTES.USER_PROFILE} component={Profile} />
                   <Route exact path={ROUTES.CHAT} component={Messenger} />
-                  <Route path={ROUTES.CHAT + "/:roomId"} component={Messenger} />
                 </>
               }
             </Router>

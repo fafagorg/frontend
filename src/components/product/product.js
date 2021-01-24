@@ -28,7 +28,7 @@ function Product(props){
             </td>
         }
         {props.chat && props.product.seller !== props.username &&
-            <a href={"/chat/"+props.username+"-"+props.product.seller+"-"+props.product.id}>
+            <a href={"/chat?roomId="+props.username+"-"+props.product.seller+"-"+props.product.id}>
                 <button className="btn btn-primary">Chat with seller</button>
             </a>
         }

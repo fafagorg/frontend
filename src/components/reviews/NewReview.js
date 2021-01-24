@@ -1,21 +1,22 @@
 import React from 'react';
+import Rating from '@material-ui/lab/Rating';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
+
+
 
 class NewReview extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            id: '',
             title: '',
-            score: '',
-            description: '',
-            dateCreated: '',
-            reviewerClientId: '',
-            reviewedProductId: ''
+            score: 1,
+            description: ''
         }
 
         this.changeReview = this.changeReview.bind(this);
         this.clickAdd = this.clickAdd.bind(this);
+        this.setValue = this.setValue.bind(this);
     }
 
     changeReview(event) {
@@ -31,15 +32,15 @@ class NewReview extends React.Component {
         let result = await this.props.onAddReview(this.state);
         if (result) {
             this.setState({
-                id: '',
                 title: '',
-                score: '',
-                description: '',
-                dateCreated: '',
-                reviewerClientId: '',
-                reviewedProductId: ''
+                score: 1,
+                description: ''
             });
         }
+    }
+
+    async setValue(newValue){
+        this.state.score = newValue
     }
 
     render() {
@@ -50,20 +51,25 @@ class NewReview extends React.Component {
                     <th>Score</th>
                     <th>Description</th>
 
-                    <th>Reviewer</th>
-                    <th>Reviewed product</th>
 
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
                 </tr>
                 <tr>
                     <td><input className="form-control" name="title" value={this.state.title} onChange={this.changeReview}></input></td>
-                    <td><input className="form-control" name="score" value={this.state.score} onChange={this.changeReview}></input></td>
+                    <td>
+                     
+                        <Rating
+            name="customized-empty"
+            defaultValue={1}
+            precision={1}
+            onChange={(event, newValue) => {
+                this.state.score= newValue
+              }}
+            emptyIcon={<StarBorderIcon fontSize="inherit" />}
+          />
+                        </td>
                     <td><input className="form-control" name="description" value={this.state.description} onChange={this.changeReview}></input></td>
-
-                    <td><input className="form-control" name="reviewerClientId" value={this.state.reviewerClientId} onChange={this.changeReview}></input></td>
-                    <td><input className="form-control" name="reviewedProductId" value={this.state.reviewedProductId} onChange={this.changeReview}></input></td>
-
                     <td><button className="btn btn-primary" onClick={this.clickAdd}>Add Review</button></td>
                 </tr>
             </table>

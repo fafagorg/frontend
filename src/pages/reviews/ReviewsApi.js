@@ -1,14 +1,16 @@
+
+
 class ReviewsApi {
     static API_BASE_URL = process.env.REACT_APP_ENDPOINT_API_REVIEWS + '/api/v1';
 
-    static requestHeaders(auth) {
-        return auth ? {
-            Authorization: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Il9pZCI6IjYwMDQzN2Q5ODU2MzllNDdkYWQ4MmQ4NyIsInVzZXJuYW1lIjoiVGVzdEp1YW5taSIsIm5hbWUiOiJKdWFubWkiLCJzdXJuYW1lIjoiQmxhbmNvIiwiZW1haWwiOiJqdWFibGFmZXJAYWx1bS51cy5lcyIsInBob25lIjoiNjY2MTExMjIyIiwiX192IjowfSwiaWF0IjoxNjExNDAxMDY2LCJleHAiOjE2MTE0ODc0NjZ9.VJp7mUvFtjqyT0GNMYnHogn4RlquQvRHZaHslaP9FxA"
+    static requestHeaders(token) {
+        return token ? {
+            Authorization: token
         } : {}
     }
 
     static getAllReviews() {
-        const headers = this.requestHeaders(false);
+        const headers = this.requestHeaders();
         const request = new Request(ReviewsApi.API_BASE_URL + "/reviews", {
             method: 'GET',
             headers: headers
@@ -19,8 +21,22 @@ class ReviewsApi {
         });
     }
 
-    static postReview(review) {
-        const headers = this.requestHeaders(true);
+    static getReviewsByTypeAndId(type, id) {
+        const headers = this.requestHeaders();
+        const request = new Request(ReviewsApi.API_BASE_URL + "/reviews/" + type + "/" + id, {
+            method: 'GET',
+            headers: headers
+        });
+
+        return fetch(request).then(response => {
+            return response.json();
+        });
+    }
+
+
+    static postReview(token, review) {
+        const headers = this.requestHeaders(token);
+
         const request = new Request(ReviewsApi.API_BASE_URL + "/reviews", {
             method: 'POST',
             headers: { ...headers, "Content-Type": "application/json" },
@@ -32,8 +48,27 @@ class ReviewsApi {
         });
     }
 
-    static deleteReview(id) {
-        const headers = this.requestHeaders(true);
+    static async checkBadWords(review) {
+        const requestBad = new Request("/static/jsons/badwords.json", {
+            method: 'GET',
+            headers: { "Content-Type": "application/json" }
+        });
+
+        let response = await fetch(requestBad);
+        let responseJson = await response.json();
+        let result = false;
+        responseJson.badwordList.forEach(badWord => {
+            if (review.title.toLowerCase().includes(badWord) || review.description.toLowerCase().includes(badWord)) {
+                result = true;
+            }
+        })
+        return result;
+
+    }
+
+
+    static deleteReview(token, id) {
+        const headers = this.requestHeaders(token);
         const request = new Request(ReviewsApi.API_BASE_URL + "/reviews/" + id, {
             method: 'DELETE',
             headers: headers
@@ -44,8 +79,8 @@ class ReviewsApi {
         });
     }
 
-    static putReview(id, review) {
-        const headers = this.requestHeaders(true);
+    static putReview(token, id, review) {
+        const headers = this.requestHeaders(token);
         const request = new Request(ReviewsApi.API_BASE_URL + "/reviews/" + id, {
             method: 'PUT',
             headers: { ...headers, "Content-Type": "application/json" },
@@ -58,4 +93,6 @@ class ReviewsApi {
     }
 }
 
+
 export default ReviewsApi;
+

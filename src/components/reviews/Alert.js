@@ -15,7 +15,7 @@ function Alert({ message, onCloseCallback }) {
     return (
 
         <Snackbar
-            autoHideDuration={9000}
+            autoHideDuration={7000}
             anchorOrigin={popOverPosition}
             open={true}
             onClose={onCloseCallback}

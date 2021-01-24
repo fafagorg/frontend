@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { connect } from "react-redux";
 import * as AuthService from "../../services/auth";
 import EditProduct from './EditProduct';
+import NewProduct from './newProduct';
 
 function stateToProps(state) {
   return {
@@ -14,7 +15,6 @@ function stateToProps(state) {
     data: jwt.decode(state.userToken),
   }
 }
-
 
 class Products extends React.Component {
     constructor(props) {
@@ -24,25 +24,42 @@ class Products extends React.Component {
             products: [],
             exchangeRates: [],
             currentRate: {label:"EUR",value: 1},
-            idProduct: window.location.search.replace("?id=", ""),
-            username: "",
+            username: window.location.search.replace("?username=", ""),
+            currentUser: '',
             token: props.token,
             isEditing: {},
             bannedWords: ['ticket','spam','pikachu','date']
+
         };
         this.handleEdit = this.handleEdit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.handleCloseError = this.handleCloseError.bind(this);
+        this.addProduct = this.addProduct.bind(this);
     }
 
     async componentDidMount(){
+      if(this.state.username){
+        ProductService.getClientProducts(this.state.username)
+        .then(
+          (result) => {
+              this.setState({
+                products: result
+              })
+          },
+          (error) => {
+              this.setState({
+                errorInfo:  error.toString()
+              })
+          }
+        )
+      }
 
       if(this.state.token){
         AuthService.getUser(this.state.token)
         .then(
           (result) => {
               this.setState({
-                username: result.userId
+                currentUser: result.userId
               })
           },
           (error) => {
@@ -52,22 +69,7 @@ class Products extends React.Component {
           }
         )       
       }
-
-      if(this.state.idProduct){
-        ProductService.getProductById(this.state.idProduct)
-        .then(
-            (result) => {
-                this.setState({
-                  products: result
-                })
-            },
-            (error) => {
-                this.setState({
-                  errorInfo:  error.toString()
-                })
-            }
-        )
-      }
+      
 
       ProductService.getExchangeRates().then(
         (result) => {
@@ -110,7 +112,7 @@ class Products extends React.Component {
 
     handleSave(name, product){
       
-      if(product.seller !== this.state.username){
+      if(product.seller !== this.state.currentUser){
         this.setState({
           errorInfo:  "You can not edit products that you do not own"
         })
@@ -133,7 +135,7 @@ class Products extends React.Component {
         
             let res = {isEditing: isEditing};
   
-            if(product.seller === this.state.username){
+            if(product.seller === this.state.currentUser){
               res.products = [...products.slice(0,pos), Object.assign({}, product), ...products.slice(pos+1)];    
             }
             return res;
@@ -155,7 +157,7 @@ class Products extends React.Component {
     }
 
     handleDelete(product) {
-      if(product.seller !== this.state.username){
+      if(product.seller !== this.state.currentUser){
         this.setState({
           errorInfo:  "You can not delete a product that you do not own"
         })
@@ -173,6 +175,30 @@ class Products extends React.Component {
         this.setState({
             errorInfo: null
         })
+    }
+
+    addProduct(product) {
+      if(isNaN(product.price)){
+        this.setState({
+          errorInfo:  "Price must be a number"
+        })
+      }else if(this.state.bannedWords.filter((b) => { return product.name.includes(b) }).length > 0 || this.state.bannedWords.filter((b) => { return product.category.includes(b) }).length > 0){
+        this.setState({
+          errorInfo:  "Banned word used in name or category"
+        })
+      }else{
+
+        product.seller = this.state.currentUser;
+
+        ProductService.addProduct(product, this.state.token);
+
+        this.setState(prevState => {
+
+          return({
+              products: [...prevState.products, product]
+          });          
+        });
+      }
     }
 
     render() {
@@ -193,9 +219,12 @@ class Products extends React.Component {
                 </tr>
             </thead>
             <tbody>
+            {this.state.token && this.state.username === this.state.currentUser &&
+            <NewProduct onAddProduct={this.addProduct}/>
+            }
             {this.state.products.map((product) => 
                 !this.state.isEditing[product.id] ?
-                <Product key={product.id} product = {product} currentRate={this.state.currentRate} hidden={true} username={this.state.username}
+                <Product key={product.id} product = {product} currentRate={this.state.currentRate} username={this.state.currentUser} hideLink={true}
                   chat={this.state.token}
                   onEdit={this.handleEdit}
                   onDelete={this.handleDelete}/>
@@ -211,6 +240,7 @@ class Products extends React.Component {
             <a href="/search">
                 <button className="btn btn-primary">Return to general search</button>
             </a>
+            
 
             </tbody>
             </table>

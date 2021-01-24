@@ -85,7 +85,6 @@
 #frame #sidepanel #contacts {
   overflow-y: scroll;
   overflow-x: hidden;
-  padding-top: 40px;
 }
 
 @media screen and (max-width: 735px) {
@@ -171,7 +170,7 @@
   font-family: sans-serif;
   float: left;
   border: none;
-  width: calc(100% - 90px);
+  width: calc(100% - 50px);
   padding: 11px 32px 10px 8px;
   font-size: 0.8em;
   color: #32465a;

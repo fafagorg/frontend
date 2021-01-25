@@ -36,7 +36,7 @@ class NewProduct extends React.Component {
                 <td><input className="form-control" placeholder="productCategory" name="category" value={this.state.category} onChange={this.changeProduct}/></td>
                 <td></td>
                 <td></td>
-                <td><button className="btn btn-primary" onClick={this.clickAdd}>Add Product</button></td>
+                <td><button data-testid="add" className="btn btn-primary" onClick={this.clickAdd}>Add Product</button></td>
             </tr>
         );
     }

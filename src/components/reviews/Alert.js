@@ -22,7 +22,7 @@ function Alert({ message, onCloseCallback }) {
             key={popOverPosition.vertical + popOverPosition.horizontal}
         >
             <Alertita variant="filled" onClose={onCloseCallback} severity="error" action={
-                <Button color="inherit" size="small" onClick={onCloseCallback}>
+                <Button data-testid="close" color="inherit" size="small" onClick={onCloseCallback}>
                     ✖
                 </Button>
             }>

@@ -111,7 +111,7 @@ function NavBar(props) {
             aria-label="open drawer"
             onClick={() => props.history.push(ROUTES.HOME)}
           >
-            売
+            💸
           </IconButton>
           <div className={classes.search} >
             <div className={classes.searchIcon} >

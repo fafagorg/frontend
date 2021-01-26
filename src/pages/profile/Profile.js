@@ -4,7 +4,7 @@ import React from "react";
   render() {
     return (
       <>
-        <h1>Profile!</h1>
+        <h1>Profile 1!</h1>
       </>
     );
   }

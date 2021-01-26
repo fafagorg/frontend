@@ -60,13 +60,13 @@ function Product(props){
             </>
           }
           {props.chat && props.product.seller !== props.username &&
-            <a href={"/chat/"+props.username+"-"+props.product.seller+"-"+props.product.id}>
+            <a href={"/chat?roomId="+props.username+"-"+props.product.seller+"-"+props.product.id}>
                 <button className="btn btn-primary">Chat with seller</button>
             </a>
           }
             <br/>
             <br/>
-            <a href={"/review/product/"+props.product.id}>
+            <a href={"/reviews/product/"+props.product.id}>
                 <button className="btn btn-primary">Product reviews</button>
             </a>
           </Typography>

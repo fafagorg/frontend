@@ -5,13 +5,24 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Product from '../../components/product/product.js';
 import * as ProductService from "../../services/product";
+import * as AuthService from "../../services/auth";
+import jwt from "jsonwebtoken";
+import { connect } from "react-redux";
 
+function stateToProps(state) {
+  return {
+    token: state.userToken,
+    data: jwt.decode(state.userToken),
+  }
+}
 class Home extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
         errorInfo: null,
+        userId: '',
+        token: props.token,
         products: [],
 
     };
@@ -31,6 +42,21 @@ class Home extends React.Component {
               })
           }
       )
+      if(this.state.token){
+        AuthService.getUser(this.state.token)
+        .then(
+          (result) => {
+              this.setState({
+                userId: result.userId
+              })
+          },
+          (error) => {
+              this.setState({
+                errorInfo:  error.toString()
+              })
+          }
+        )       
+      }
   }
   render() {
     return (
@@ -57,4 +83,4 @@ class Home extends React.Component {
   }
 }
 
-export default withRouter(Home)
+export default connect(stateToProps)(withRouter(Home))

@@ -374,14 +374,15 @@ function RegisterDialog(props) {
 
 function mapStateToProps(state) {
   return {
-    userToken: state.userToken
+    userToken: state.userToken,
+    username: state.username
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setUserToken: (token) => {
-      dispatch({ type: "SET_TOKEN", payload: token });
+    setUserToken: (token, username) => {
+      dispatch({ type: "SET_TOKEN", payload: {token:token, username:username} });
     }
   }
 }

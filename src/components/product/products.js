@@ -26,10 +26,10 @@ class Products extends React.Component {
             products: [],
             isEditing: {},
             userId: '',
-            exchangeRates: [{value: 5, label: "DOLARES"}, {label:"EUR",value: 1}],
+            exchangeRates: [],
             currentRate: {label:"EUR",value: 1},
             token: props.token,
-            bannedWords: ['ticket','spam','pikachu','date']
+            bannedWords: ['ticket','spam','exchange','date','dating','dm','whatsapp']
 
         };
         this.handleCloseError = this.handleCloseError.bind(this);

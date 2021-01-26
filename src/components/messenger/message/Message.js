@@ -8,7 +8,7 @@ class Message extends React.Component {
   render() {
     return (
       <>
-        <li class={this.props.dataa.userId === this.props.data.user.name ? "sent" : "replies"}>
+        <li class={this.props.dataa.userId === this.props.data.user.username ? "sent" : "replies"}>
           <p>{this.props.dataa.content}</p>
         </li>
       </>

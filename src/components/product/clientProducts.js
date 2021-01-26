@@ -186,7 +186,7 @@ class Products extends React.Component {
         })
     }
 
-    addProduct(product) {
+    async addProduct(product) {
       if(isNaN(product.price)){
         this.setState({
           errorInfo:  "Price must be a number"
@@ -202,7 +202,7 @@ class Products extends React.Component {
 
         product.seller = this.state.currentUser;
 
-        ProductService.addProduct(product, this.state.token);
+        await ProductService.addProduct(product, this.state.token);
 
         window.location.reload();
       }

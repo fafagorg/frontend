@@ -49,10 +49,11 @@ class App extends React.Component {
               <Route exact path={ROUTES.SEARCH} component={Search} />
               <Route exact path={ROUTES.PRODUCT} component={Product} />
               <Route exact path={ROUTES.CLIENTPRODUCTS} component={ClientProducts} />
+              <Route path={ROUTES.REVIEWS + "/:listType" + "/:id"} component={Reviews} />
               {this.props.userToken &&
                 <>
                   <Route exact path={ROUTES.USER_PROFILE} component={Profile} />
-                  <Route path={ROUTES.REVIEWS + "/:listType" + "/:id"} component={Reviews} />
+                 
                   <Route exact path={ROUTES.CHAT} component={Messenger} />
                 </>
               }

@@ -17,7 +17,6 @@ export default class Room extends React.Component {
           ></span>
           <div class="meta">
             <p class="name">{this.props.data.roomName}</p>
-            <p class="preview">{this.props.data.lastMessage}</p>
           </div>
         </div>
         <i class="fa far fa-trash-alt" id="remove" aria-hidden="true" onClick={() => this.props.deleteRoom(this.props.data.roomId)}></i>

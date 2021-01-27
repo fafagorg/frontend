@@ -194,7 +194,7 @@ function RegisterDialog(props) {
           password: password
         }).then(res => {
           var token = res.token;
-          props.setUserToken(token);
+          props.setUserToken(token, username);
         }).catch(err => {
           console.log(err);
         });

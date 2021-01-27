@@ -49,7 +49,7 @@ class EditReview extends React.Component {
     }
 
     async saveReview() {
-        const result = ReviewsApi.putReview(this.props.token, this.state.item.id, this.state.item)
+        const result = ReviewsApi.putReview(this.props.userToken, this.state.item.id, this.state.item)
         this.props.history.push('/profile')
     }
 

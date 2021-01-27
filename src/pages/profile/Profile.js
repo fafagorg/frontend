@@ -102,7 +102,8 @@ class Profile extends React.Component {
 
   async loadReviews() {
     try {
-      let result = await ProfileApi.getProfile(this.props.username);
+      let idProfile = this.profileId ? this.profileId : this.props.username
+      let result = await ProfileApi.getProfile(idProfile);
       if (result.err) {
         this.setState({
           errorInfo: result.err

@@ -43,7 +43,7 @@ function Product(props){
           </Typography>
           <Typography variant="h6" color="textPrimary" component="p">
           {!props.hideLink &&
-            <p><text>Seller: </text> <Link class="link" style={{ color: '#00F' }} to={"/product_client?username="+ props.product.seller}>{props.product.seller}</Link></p>
+            <p><text>Seller: </text> <Link class="link" style={{ color: '#00F' }} to={"/profile/"+ props.product.seller}>{props.product.seller}</Link></p>
           }
           {props.hideLink &&
             props.product.seller

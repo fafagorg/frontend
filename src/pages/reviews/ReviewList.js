@@ -160,6 +160,7 @@ class Review extends React.Component {
           <Alert message={this.state.errorInfo} onCloseCallback={this.handleCloseError} />
           {reviewCards}
           <br></br>
+          <h3>Leave a review:</h3>
           <NewReview onAddReview={this.addReview} />
         </div>
       </>

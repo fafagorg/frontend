@@ -11,6 +11,7 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Avatar from '@material-ui/core/Avatar';
+import NewReview from '../../components/reviews/NewReview.js';
 
 
 class Profile extends React.Component {
@@ -28,7 +29,7 @@ class Profile extends React.Component {
       email: '',
       photo: '',
       reviewsDone: [
-        ],
+      ],
       reviewsReceived: [],
       products: []
     };
@@ -37,9 +38,55 @@ class Profile extends React.Component {
     this.getProfileTitle = this.getProfileTitle.bind(this);
     this.addComment = this.addComment.bind(this);
     this.deleteReview = this.deleteReview.bind(this);
+    this.addReview = this.addReview.bind(this);
   }
 
-  async deleteReview(reviewId){
+  async addReview(review) {
+    if (review.title === '') {
+      this.setState({
+        errorInfo: "Title cannot be empty"
+      });
+      return false;
+    }
+    if (review.description === '') {
+      this.setState({
+        errorInfo: "Description cannot be empty"
+      });
+      return false;
+    }
+
+    review.reviewedClientId = this.profileId
+
+
+    if (Number(review.score) < 1 || Number(review.score) > 5) {
+      this.setState({
+        errorInfo: "Score must be a number between 1 and 5"
+      });
+      return false;
+    }
+
+    try {
+      let containBadWords = await ReviewsApi.checkBadWords(review);
+      if (!containBadWords) {
+        await ReviewsApi.postReview(this.props.userToken, review)
+      } else {
+        this.setState({
+          errorInfo: "Your review contains bad words. Please be polite."
+        });
+        return false;
+      }
+
+    } catch (error) {
+      this.setState({
+        errorInfo: "There was an error adding review" + error
+      });
+    }
+
+    await this.loadReviews();
+    return true;
+  }
+
+  async deleteReview(reviewId) {
     try {
       await ReviewsApi.deleteReview(this.props.userToken, reviewId)
     } catch (error) {
@@ -119,11 +166,13 @@ class Profile extends React.Component {
 
   getProfileTitle() {
     return <>
-    <Avatar alt="Profile photo" style={{width: 100, height: 100}} src={this.state.photo} />
-    <h1>{this.state.name} {this.state.surname} profile</h1>
-    
+      <Avatar alt="Profile photo" style={{ width: 100, height: 100 }} src={this.state.photo} />
+      <h1>{this.state.name} {this.state.surname} profile</h1>
+
     </>
   }
+
+
 
   render() {
 
@@ -146,16 +195,16 @@ class Profile extends React.Component {
         <Alert message={this.state.errorInfo} onCloseCallback={this.handleCloseError} />
         {this.getProfileTitle()}
         <a href={"/product_client?username=" + this.props.username}>
-        <br></br>
-          <button  className="btn btn-primary">👁‍🗨  See {this.props.username} products</button>
+          <br></br>
+          <button className="btn btn-primary">👁‍🗨  See {this.props.username} products</button>
         </a>
         <br></br>
         <br></br>
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <div style={{ marginLeft: '20px' }}>
-            <h2>Your Reviews: </h2>
-        {reviewsDoneCards}
+              <h2>Your Reviews: </h2>
+              {reviewsDoneCards}
               <br></br>
               <br></br>
             </div>
@@ -164,13 +213,23 @@ class Profile extends React.Component {
           <Grid item xs={6}>
             <div style={{ marginRight: '20px' }}>
               <h2>Reviews received:</h2>
-        {reviewsReceivedCards}
+              {reviewsReceivedCards}
             </div>
             <br></br>
             <br></br>
           </Grid>
 
         </Grid>
+        <br></br>
+
+        {this.profileId ?
+          <>
+            <h3>Leave a review to {this.state.name} {this.state.surname}:</h3>
+            <NewReview onAddReview={this.addReview} />
+          </> :
+          <>
+          </>
+        }
 
       </>
     );

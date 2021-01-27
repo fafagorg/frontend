@@ -66,7 +66,7 @@ class Home extends React.Component {
             Fafago
           </Typography>
           <Typography variant="h4" gutterBottom>
-            Cuando haces pop, ya no hay stop.
+            It's simple, sell and go.
           </Typography>
         </div>
         <div style={{ backgroundColor: "#eeeeee" }}>

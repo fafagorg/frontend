@@ -253,7 +253,7 @@ class Messenger extends React.Component {
 
   async modifyRoomName(roomId) {
     let message = this.state.message
-    let roomName = prompt("Please enter your name", message.roomName);
+    let roomName = prompt("Please enter your new name");
 
     try {
       await MessengerServices.modifyRoomName(roomId, {roomName: roomName}, this.props.token);

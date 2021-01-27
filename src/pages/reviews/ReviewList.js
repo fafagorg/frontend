@@ -4,23 +4,9 @@ import RecipeReviewCard from '../../components/reviews/ReviewCard'
 import Alert from '../../components/reviews/Alert.js';
 import NewReview from '../../components/reviews/NewReview.js';
 import * as ROUTES from "../../constants/routes";
-import { withStyles } from '@material-ui/core/styles';
-import Rating from '@material-ui/lab/Rating';
 import ReviewsApi from './ReviewsApi.js';
 import { connect } from 'react-redux'
 
-
-
-
-const StyledRating = withStyles({
-  iconFilled: {
-    color: '#ff6d75',
-  },
-  iconHover: {
-    color: '#ff3d47',
-  },
-
-})(Rating);
 
 
 
@@ -40,13 +26,15 @@ class Review extends React.Component {
     this.handleCloseError = this.handleCloseError.bind(this);
     this.addReview = this.addReview.bind(this);
     this.loadReviews = this.loadReviews.bind(this);
+    this.addComment = this.addComment.bind(this);
+    this.deleteReview = this.deleteReview.bind(this);
   }
 
 
   async loadReviews() {
     try {
       let result;
-      if (this.type == 'client' || this.type == 'product') {
+      if (this.type === 'client' || this.type === 'product') {
         result = await ReviewsApi.getReviewsByTypeAndId(this.type, this.id);
       }
       else {
@@ -83,9 +71,9 @@ class Review extends React.Component {
       });
       return false;
     }
-    if (this.type == "product") {
+    if (this.type === "product") {
       review.reviewedProductId = this.id
-    } else if (this.type == "client") {
+    } else if (this.type === "client") {
       review.reviewedClientId = this.id
     }
 
@@ -117,6 +105,39 @@ class Review extends React.Component {
     return true;
   }
 
+  async addComment(comment, reviewId) {
+    if (comment.body === '') {
+      this.setState({
+        errorInfo: "Comment title cannot be empty"
+      });
+      return false;
+    }
+    comment.clientId = this.props.username;
+    try {
+      await ReviewsApi.postComment(this.props.userToken, comment, reviewId)
+    } catch (error) {
+      this.setState({
+        errorInfo: "There was an error adding review" + error
+      });
+    }
+
+    await this.loadReviews();
+    return true;
+  }
+
+  async deleteReview(reviewId){
+    try {
+      await ReviewsApi.deleteReview(this.props.userToken, reviewId)
+    } catch (error) {
+      this.setState({
+        errorInfo: "There was an error removing the review" + error
+      });
+    }
+
+    await this.loadReviews();
+    return true;
+  }
+
 
 
 
@@ -130,7 +151,7 @@ class Review extends React.Component {
   render() {
     var reviewCards = []
     this.state.reviews.forEach(review => {
-      reviewCards.push(<RecipeReviewCard review={review}></RecipeReviewCard>)
+      reviewCards.push(<RecipeReviewCard deleteReview={this.deleteReview} deleteButton={review.reviewerClientId === this.props.username} review={review} addComment={this.addComment}></RecipeReviewCard>)
     })
 
     return (
@@ -139,8 +160,8 @@ class Review extends React.Component {
           <Alert message={this.state.errorInfo} onCloseCallback={this.handleCloseError} />
           {reviewCards}
           <br></br>
+          <h3>Leave a review:</h3>
           <NewReview onAddReview={this.addReview} />
-
         </div>
       </>
     );
@@ -151,7 +172,8 @@ class Review extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    userToken: state.userToken
+    userToken: state.userToken,
+    username: state.username
   }
 }
 export default connect(mapStateToProps)(Review);

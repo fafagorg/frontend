@@ -21,6 +21,17 @@ class ReviewsApi {
         });
     }
 
+    
+    static getReview(id) {
+        const request = new Request(ReviewsApi.API_BASE_URL + "/reviews/" + id, {
+            method: 'GET'
+        });
+
+        return fetch(request).then(response => {
+            return response.json();
+        });
+    }
+
     static getReviewsByTypeAndId(type, id) {
         const headers = this.requestHeaders();
         const request = new Request(ReviewsApi.API_BASE_URL + "/reviews/" + type + "/" + id, {
@@ -41,6 +52,20 @@ class ReviewsApi {
             method: 'POST',
             headers: { ...headers, "Content-Type": "application/json" },
             body: JSON.stringify(review)
+        });
+
+        return fetch(request).then(response => {
+            return response.json();
+        });
+    }
+
+    static postComment(token, comment, reviewId) {
+        const headers = this.requestHeaders(token);
+       
+        const request = new Request(ReviewsApi.API_BASE_URL + "/review/" + reviewId + '/comments', {
+            method: 'POST',
+            headers: { ...headers, "Content-Type": "application/json" },
+            body: JSON.stringify(comment)
         });
 
         return fetch(request).then(response => {

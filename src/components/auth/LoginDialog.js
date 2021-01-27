@@ -57,7 +57,7 @@ function LoginDialog(props) {
         password: password
       }).then(res => {
         var token = res.token;
-        props.setUserToken(token);
+        props.setUserToken(token, username);
         setLoginSucces('Logged correctly. Automatically closing this window in 3 seconds.');
         setTimeout(() => handleClose(), 3000);
       }).catch(err => {
@@ -140,14 +140,15 @@ function LoginDialog(props) {
 
 function mapStateToProps(state) {
   return {
-    userToken: state.userToken
+    userToken: state.userToken,
+    username: state.username
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-    setUserToken: (token) => {
-      dispatch({ type: "SET_TOKEN", payload: token });
+    setUserToken: (token, username) => {
+      dispatch({ type: "SET_TOKEN", payload: {token: token, username: username} });
     }
   }
 }

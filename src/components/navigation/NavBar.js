@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    paddingLeft: `calc(1em + ${theme.spacing(0)}px)`,
     transition: theme.transitions.create("width"),
     width: "100%",
     [theme.breakpoints.up("md")]: {
@@ -95,6 +95,10 @@ const useStyles = makeStyles((theme) => ({
 
 function NavBar(props) {
   const classes = useStyles();
+  let hola = "";
+  function handleChange(event) {
+    hola = event.target.value
+  }
 
   return (
     <div className={classes.grow}>
@@ -107,22 +111,31 @@ function NavBar(props) {
             aria-label="open drawer"
             onClick={() => props.history.push(ROUTES.HOME)}
           >
-            売
+            💸
           </IconButton>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search in all categories"
+          <div className={classes.search} >
+            <InputBase style={{ color: '#000' }}
+              placeholder="Search products"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ "aria-label": "search" }}
+              onChange={handleChange}
             />
           </div>
           <div className={classes.grow} />
+          <IconButton
+                aria-label="search"
+                color="primary"
+                onClick={() =>{ props.history.push("/nada"); setTimeout(() => {
+                  props.history.push(ROUTES.SEARCH + "?category="+ hola)
+                }, 1); }}
+              >
+              
+                  <SearchIcon />
+            
+              </IconButton>
           <LoginDialog />
           <RegisterDialog />
           {props.userToken &&
@@ -143,6 +156,8 @@ function NavBar(props) {
     </div>
   );
 }
+
+
 
 function mapStateToProps(state) {
   return {

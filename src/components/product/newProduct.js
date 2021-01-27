@@ -8,32 +8,37 @@ class NewProduct extends React.Component {
         this.clickAdd = this.clickAdd.bind(this);
     }
 
-    changeProduct(event) {
-        const name = event.target.name;
-        const price = event.target.price;
-        const category = event.target.category;
-        const value = event.target.value;
-        this.setState({
-            [name]: value,
-            [price]: value,
-            [category]: value
-        });
+    changeProduct(editing, event) {
+        const data = event.target.value;
+        if (editing == "name") {
+            this.setState({
+                name: data
+            });
+        } else if(editing == "price") {
+            this.setState({
+                price: data
+            });    
+        } else {
+            this.setState({
+                category: data
+            }); 
+        }
     }
 
     clickAdd() {
         this.props.onAddProduct(this.state);
-        this.setState({
-            name: '', price: '', category: ''
-        });
     }
 
     render() {
         return(
+            
             <tr>
-                <td><input className="form-control" name="name" value={this.state.name} onChange={this.changeProduct}/></td>
-                <td><input className="form-control" name="price" value={this.state.price} onChange={this.changeProduct}/></td>
-                <td><input className="form-control" name="category" value={this.state.category} onChange={this.changeProduct}/></td>
-                <td><button className="btn btn-primary" onClick={this.clickAdd}>Add Product</button></td>
+                <td><input className="form-control" placeholder="Name" name="name" value={this.state.name} onChange={(event) => this.changeProduct("name", event)}/></td>
+                <td><input className="form-control" placeholder="Price" name="price" value={this.state.price} onChange={(event) =>this.changeProduct("price", event)}/></td>
+                <td><input className="form-control" placeholder="ategory" name="category" value={this.state.category} onChange={(event) =>this.changeProduct("category", event)}/></td>
+                <td></td>
+                <td></td>
+                <td><button data-testid="add" className="btn btn-primary" onClick={this.clickAdd}>Add Product</button></td>
             </tr>
         );
     }

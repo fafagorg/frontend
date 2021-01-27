@@ -8,6 +8,8 @@ import { connect } from "react-redux";
 import * as AuthService from "../../services/auth";
 import EditProduct from './EditProduct';
 import NewProduct from './newProduct';
+import { withHistory } from "../../components/navigation/history";
+import Container from '@material-ui/core/Container';
 
 function stateToProps(state) {
   return {
@@ -47,9 +49,16 @@ class Products extends React.Component {
               })
           },
           (error) => {
+            if(error.message.includes("404")){
+              this.setState({
+                products: []
+              })
+            }else{
               this.setState({
                 errorInfo:  error.toString()
               })
+            }
+
           }
         )
       }
@@ -177,7 +186,7 @@ class Products extends React.Component {
         })
     }
 
-    addProduct(product) {
+    async addProduct(product) {
       if(isNaN(product.price)){
         this.setState({
           errorInfo:  "Price must be a number"
@@ -188,16 +197,14 @@ class Products extends React.Component {
         })
       }else{
 
+        product.name = product.name.toString()
+        product.category = product.category.toString()
+
         product.seller = this.state.currentUser;
 
-        ProductService.addProduct(product, this.state.token);
+        await ProductService.addProduct(product, this.state.token);
 
-        this.setState(prevState => {
-
-          return({
-              products: [...prevState.products, product]
-          });          
-        });
+        window.location.reload();
       }
     }
 
@@ -207,21 +214,9 @@ class Products extends React.Component {
           
         <div>
             <Alert message={this.state.errorInfo} onClose={this.handleCloseError}/>
-            <table className="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Seller</th>
-                    <th>Current currency</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-            {this.state.token && this.state.username === this.state.currentUser &&
-            <NewProduct onAddProduct={this.addProduct}/>
-            }
+            <hr/>
+            <Container maxWidth="lg">
+        
             {this.state.products.map((product) => 
                 !this.state.isEditing[product.id] ?
                 <Product key={product.id} product = {product} currentRate={this.state.currentRate} username={this.state.currentUser} hideLink={true}
@@ -234,17 +229,28 @@ class Products extends React.Component {
                   onChange={this.handleChange.bind(this, product.id)}
                   onSave={this.handleSave.bind(this, product.id)}/>
             )}
-            <text><strong>Select the desired typed of currency: </strong></text>
-            <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+          
+            </Container>
+            {this.state.token && this.state.username === this.state.currentUser &&
+            <div>
+              <hr/>
+              <h4><strong>Fill the following form to add a product: </strong></h4>
+              <NewProduct onAddProduct={this.addProduct}/>
+              </div>
+              }
+              <br/>
+              <br/>
+              <hr/>
+              <div style={{width: "30%"}}>
+              <text><strong>Select the desired typed of currency to show: </strong></text>
+              <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+              </div>
+          
             <br/>
             <a href="/search">
-                <button className="btn btn-primary">Return to general search</button>
+                <button  className="btn btn-primary">Return to general search</button>
             </a>
-            
-
-            </tbody>
-            </table>
-        </div>
+          </div>
         
         
         );
@@ -253,4 +259,4 @@ class Products extends React.Component {
 
 
 
-export default connect(stateToProps)(Products);
+export default connect(stateToProps)(withHistory(Products));

@@ -70,7 +70,7 @@ class NewReview extends React.Component {
           />
                         </td>
                     <td><input className="form-control" name="description" value={this.state.description} onChange={this.changeReview}></input></td>
-                    <td><button className="btn btn-primary" onClick={this.clickAdd}>Add Review</button></td>
+                    <td><button data-testid="add" className="btn btn-primary" onClick={this.clickAdd}>Add Review</button></td>
                 </tr>
             </table>
         );

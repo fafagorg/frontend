@@ -195,16 +195,16 @@ class Profile extends React.Component {
 
         <Alert message={this.state.errorInfo} onCloseCallback={this.handleCloseError} />
         {this.getProfileTitle()}
-        <a href={"/product_client?username=" + this.props.username}>
+        <a href={"/product_client?username=" + this.profileId ? this.profileId : this.props.username}>
           <br></br>
-          <button className="btn btn-primary">👁‍🗨  See {this.props.username} products</button>
+          <button className="btn btn-primary">👁‍🗨  See {this.profileId ? this.profileId : this.props.username} products</button>
         </a>
         <br></br>
         <br></br>
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <div style={{ marginLeft: '20px' }}>
-              <h2>Your Reviews: </h2>
+              <h2>Reviews done: </h2>
               {reviewsDoneCards}
               <br></br>
               <br></br>

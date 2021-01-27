@@ -44,7 +44,7 @@ class EditReview extends React.Component {
 
     async componentDidMount() {
         const result = await ReviewsApi.getReview(this.id)
-        this.state.item = result;
+        this.setState(prevState => ({ item: result  }))
     }
 
     async saveReview() {

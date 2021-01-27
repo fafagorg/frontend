@@ -187,7 +187,7 @@ class Profile extends React.Component {
       reviewsReceivedCards.push(<RecipeReviewCard deleteReview={this.deleteReview} deleteButton={review.reviewerClientId === this.props.username} review={review} addComment={this.addComment}></RecipeReviewCard>)
     })
 
-
+    let profileId = this.profileId ? this.profileId : this.props.username;
 
 
     return (
@@ -195,9 +195,9 @@ class Profile extends React.Component {
 
         <Alert message={this.state.errorInfo} onCloseCallback={this.handleCloseError} />
         {this.getProfileTitle()}
-        <a href={"/product_client?username=" + this.profileId ? this.profileId : this.props.username}>
+        <a href={"/product_client?username=" + profileId}>
           <br></br>
-          <button className="btn btn-primary">👁‍🗨  See {this.profileId ? this.profileId : this.props.username} products</button>
+          <button className="btn btn-primary">👁‍🗨  See {profileId} products</button>
         </a>
         <br></br>
         <br></br>

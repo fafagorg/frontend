@@ -7,3 +7,4 @@ export const USER_PROFILE = '/profile';
 export const REVIEWS = '/reviews'
 export const PRODUCT = '/product';
 export const CLIENTPRODUCTS = '/product_client';
+export const EDITREVIEW = '/editReview'

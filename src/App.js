@@ -9,6 +9,7 @@ import Product from "./pages/singleProduct/Product";
 import ClientProducts from "./pages/clientProducts/Product";
 import Home from "./pages/home/Home";
 import Reviews from "./pages/reviews/ReviewList";
+import EditReview from "./pages/reviews/EditReview";
 import './bootstrap.min.css';
 
 
@@ -50,10 +51,11 @@ class App extends React.Component {
               <Route exact path={ROUTES.PRODUCT} component={Product} />
               <Route exact path={ROUTES.CLIENTPRODUCTS} component={ClientProducts} />
               <Route path={ROUTES.REVIEWS + "/:listType" + "/:id"} component={Reviews} />
+              <Route path={ROUTES.USER_PROFILE + "/:id"} component={Profile} />
               {this.props.userToken &&
                 <>
                   <Route exact path={ROUTES.USER_PROFILE} component={Profile} />
-                 
+                  <Route path={ROUTES.EDITREVIEW + "/:id"} component={EditReview} />
                   <Route exact path={ROUTES.CHAT} component={Messenger} />
                 </>
               }

@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import Avatar from '@material-ui/core/Avatar';
 
 
 class Profile extends React.Component {
@@ -25,6 +26,7 @@ class Profile extends React.Component {
       name: '',
       surname: '',
       email: '',
+      photo: '',
       reviewsDone: [
         ],
       reviewsReceived: [],
@@ -64,6 +66,7 @@ class Profile extends React.Component {
         name: result.name,
         surname: result.surname,
         email: result.email,
+        photo: result.photo
       });
       if (result.reviews && result.reviews.reviewsDone && result.reviews.reviewsReceived) {
         this.setState({
@@ -115,7 +118,11 @@ class Profile extends React.Component {
 
 
   getProfileTitle() {
-    return <h1>{this.state.name} {this.state.surname} profile</h1>
+    return <>
+    <Avatar alt="Profile photo" style={{width: 100, height: 100}} src={this.state.photo} />
+    <h1>{this.state.name} {this.state.surname} profile</h1>
+    
+    </>
   }
 
   render() {

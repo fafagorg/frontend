@@ -180,19 +180,9 @@ class Products extends React.Component {
         return(
           
         <div>
+          <hr/>
             <Alert message={this.state.errorInfo} onClose={this.handleCloseError}/>
-            <table className="table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Category</th>
-                    <th>Seller</th>
-                    <th>Current currency</th>
-                    <th>&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
+            <div style={{ backgroundColor: "#eeeeee" }}>
             {this.state.products.map((product) => 
                 !this.state.isEditing[product.id] ?
                 <Product key={product.id} product = {product} currentRate={this.state.currentRate} hidden={true} username={this.state.username}
@@ -205,15 +195,22 @@ class Products extends React.Component {
                   onChange={this.handleChange.bind(this, product.id)}
                   onSave={this.handleSave.bind(this, product.id)}/>
             )}
-            <text><strong>Select the desired typed of currency: </strong></text>
-            <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+            </div>
+            <br/>
+            
+            <hr/>
+            <div style={{width: "30%"}}>
+              <text><strong>Select the desired typed of currency to show: </strong></text>
+              <Select options={this.state.exchangeRates} onChange={this.handleChangeCurrency.bind(this)}/>
+              </div>
+          
             <br/>
             <a href="/search">
-                <button className="btn btn-primary">Return to general search</button>
+                <button  className="btn btn-primary">Return to general search</button>
             </a>
+          
 
-            </tbody>
-            </table>
+   
         </div>
         
         

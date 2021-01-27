@@ -1,9 +1,10 @@
 import React from 'react';
+import { withHistory } from "../navigation/history";
 
 class FilterProduct extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {name: '', priceMax: '', priceMin: '', category: ''};
+        this.state = {name: '', priceMax: '', priceMin: '', category: this.props.history.location.search.replace("?category=", "")};
         this.changeFilter = this.changeFilter.bind(this);
         this.clickFilter = this.clickFilter.bind(this);
         this.clearFilter = this.clearFilter.bind(this);
@@ -25,11 +26,10 @@ class FilterProduct extends React.Component {
 
     clickFilter() {
         this.props.onFilterProduct(this.state);
-        this.setState({
-            name: '', priceMax: '', priceMin: '', category: ''
-        });
+        this.props.history.push("/search?category=" + this.state.category)
     }
     clearFilter(event) {
+        this.props.history.push("/search?category=")
         this.props.onFilterProduct(this.state);
         this.setState({
             name: '', priceMax: '', priceMin: '', category: ''
@@ -60,4 +60,4 @@ class FilterProduct extends React.Component {
     }
 }
 
-export default FilterProduct;
+export default withHistory(FilterProduct);

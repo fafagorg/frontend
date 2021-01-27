@@ -1,5 +1,6 @@
 const defaultState = {
-    userToken: undefined
+    userToken: undefined,
+    username: undefined
 }
 
 function reducer(state=defaultState, action) {
@@ -7,7 +8,8 @@ function reducer(state=defaultState, action) {
         case "SET_TOKEN":
             return {
                 ...state,
-                userToken: action.payload
+                userToken: action?.payload?.token,
+                username: action?.payload?.username
             }
         default: 
             return state;

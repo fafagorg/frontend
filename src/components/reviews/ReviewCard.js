@@ -14,6 +14,7 @@ import { red } from '@material-ui/core/colors';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Rating from '@material-ui/lab/Rating';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
+import NewComment from './NewComment.js';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,11 +43,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function RecipeReviewCard(props) {
-  const review = props.review
+  const review = props.review;
+  const deleteReviewFunction = function () {
+    props.deleteReview(review.id)
+  };
   let reviewIcon = '';
 
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
+  let deleteButton = '';
+
+
+  if (props.deleteButton) {
+    deleteButton = <>
+      <a href='javascript:' onClick={deleteReviewFunction}><h4>🗑</h4></a>
+      <a href={'./editReview/' + review.id} ><h4>✏</h4></a>
+    </>
+  }
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -58,15 +71,15 @@ export default function RecipeReviewCard(props) {
     comments.push(<Typography paragraph>{comment.body} </Typography>);
   }
 
-  if (review.externalScore === 'Neutral'){
+  if (review.externalScore === 'Neutral') {
     reviewIcon = "😐";
-  } else if (review.externalScore === 'Positive'){
+  } else if (review.externalScore === 'Positive') {
     reviewIcon = "😀";
-  } else if (review.externalScore === 'Verypositive'){
+  } else if (review.externalScore === 'Verypositive') {
     reviewIcon = "🥳";
-  } else  if (review.externalScore === 'Negative'){
+  } else if (review.externalScore === 'Negative') {
     reviewIcon = "😠";
-  } else  if (review.externalScore === 'Verynegative'){
+  } else if (review.externalScore === 'Verynegative') {
     reviewIcon = "💩";
   } else {
     reviewIcon = "👽";
@@ -78,26 +91,26 @@ export default function RecipeReviewCard(props) {
       <CardHeader
         avatar={
           <Avatar aria-label="recipe" className={classes.avatar}>
-             {review.reviewerClientId.substring(0,1).toUpperCase()}{review.reviewerClientId.substring(1,2)}
+            {review.reviewerClientId.substring(0, 1).toUpperCase()}{review.reviewerClientId.substring(1, 2)}
           </Avatar>
-       
+
         }
-        
+
         action={
           <div>
-          <Rating
-            name="customized-empty"
-            defaultValue={4}
-            value={review.score}
-            readOnly={true}
-            precision={1}
-            emptyIcon={<StarBorderIcon fontSize="inherit" />}
-          />
-         <br></br>
-         {reviewIcon}
+            <Rating
+              name="customized-empty"
+              defaultValue={4}
+              value={review.score}
+              readOnly={true}
+              precision={1}
+              emptyIcon={<StarBorderIcon fontSize="inherit" />}
+            />
+            <br></br>
+            {reviewIcon}
           </div>
         }
-        
+
         title={review.title}
         subheader={new Intl.DateTimeFormat("en-GB", {
           year: "numeric",
@@ -117,9 +130,9 @@ export default function RecipeReviewCard(props) {
           {review.description}
         </Typography>
       </CardContent>
+
       <CardActions disableSpacing>
-
-
+        {deleteButton}
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
@@ -137,6 +150,7 @@ export default function RecipeReviewCard(props) {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           {comments}
+          <NewComment onAddComment={props.addComment} reviewId={review.id} />
         </CardContent>
       </Collapse>
     </Card>

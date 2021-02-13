@@ -1,12 +1,13 @@
 import Search from "./Search";
 import NewProduct from '../../components/product/newProduct';
-import {Products} from '../../components/product/clientProducts';
+import { Products } from '../../components/product/clientProducts';
 import Alert from '../../components/product/Alert';
 import { unmountComponentAtNode, render as reactRender } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import { configure, mount, shallow, render } from "enzyme";
 import { Provider } from "react-redux";
 import configureMockStore from "redux-mock-store";
+import nock from 'nock';
 
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import products from "../../components/product/products";
@@ -15,7 +16,7 @@ configure({ adapter: new Adapter() })
 
 const mockStore = configureMockStore();
 
-let state = {token: '1234', username: 'test', currentUser: 'test'};
+let state = { token: '1234', username: 'test', currentUser: 'test' };
 // const store = mockStore(() => state);
 // this.state.token && this.state.username === this.state.currentUser
 const store = mockStore();
@@ -24,6 +25,14 @@ let container = document.createElement("div");
 beforeEach(() => {
   container = document.createElement("div");
   document.body.appendChild(container);
+
+  nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+    .get('/api/v1/products/client/asd')
+    .reply(200, []);
+
+  nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+    .get('/api/v1/rates')
+    .reply(200, []);
 });
 
 afterEach(() => {
@@ -89,7 +98,7 @@ afterEach(() => {
 it("Should not allow an empty title", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es";
-  const username = 'demo';
+  const username = 'asd';
   Object.defineProperty(window, 'location', {
     value: {
       location: url,
@@ -118,12 +127,10 @@ it("Should not allow an empty title", async () => {
   priceInput.prop('onChange')({ target: { name: 'price', value: 'haha yes' } });
 
   button.simulate('click');
-
-  await new Promise(resolve => setTimeout(() => resolve(), 1000));
   renderContent.find(Products).render();
 
   //Wait for state change
-  await new Promise(resolve => setTimeout(() => resolve(), 1000));
+  await new Promise(resolve => setTimeout(() => resolve(), 500));
 
   expect(renderContent.find(Products).state().errorInfo).toBe('Price must be a number');
 });

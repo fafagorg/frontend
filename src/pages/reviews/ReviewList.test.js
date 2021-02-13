@@ -12,7 +12,7 @@ import configureMockStore from "redux-mock-store";
 import { unmountComponentAtNode, render as reactRender } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
-import nock from 'nock'
+import nock from 'nock';
 
 configure({ adapter: new Adapter() })
 

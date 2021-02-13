@@ -18,7 +18,7 @@ function stateToProps(state) {
   }
 }
 
-class Products extends React.Component {
+export class Products extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -211,7 +211,7 @@ class Products extends React.Component {
     render() {
       
         return(
-          
+          <>
         <div>
             <Alert message={this.state.errorInfo} onClose={this.handleCloseError}/>
             <hr/>
@@ -251,7 +251,7 @@ class Products extends React.Component {
                 <button  className="btn btn-primary">Return to general search</button>
             </a>
           </div>
-        
+          </>
         
         );
     }

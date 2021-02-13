@@ -67,8 +67,8 @@ export default function RecipeReviewCard(props) {
 
   var comments = []
   for (const comment of review.comments) {
-    comments.push(<Typography paragraph>{comment.clientId}</Typography>)
-    comments.push(<Typography paragraph>{comment.body} </Typography>);
+    comments.push(<Typography paragraph key={comment.id}>{comment.clientId}</Typography>)
+    comments.push(<Typography paragraph key={'s' + comment.id}>{comment.body} </Typography>);
   }
 
   if (review.externalScore === 'Neutral') {

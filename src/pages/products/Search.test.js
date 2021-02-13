@@ -1,8 +1,24 @@
 import Search from "./Search";
 import NewProduct from '../../components/product/newProduct';
+import {Products} from '../../components/product/clientProducts';
 import Alert from '../../components/product/Alert';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { unmountComponentAtNode, render as reactRender } from 'react-dom';
 import { act } from 'react-dom/test-utils';
+import { configure, mount, shallow, render } from "enzyme";
+import { Provider } from "react-redux";
+import configureMockStore from "redux-mock-store";
+
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+import products from "../../components/product/products";
+
+configure({ adapter: new Adapter() })
+
+const mockStore = configureMockStore();
+
+let state = {token: '1234', username: 'test', currentUser: 'test'};
+// const store = mockStore(() => state);
+// this.state.token && this.state.username === this.state.currentUser
+const store = mockStore();
 
 let container = document.createElement("div");
 beforeEach(() => {
@@ -16,56 +32,98 @@ afterEach(() => {
   container = null;
 });
 
-it("Should render the message of the alert", () => {
-  act(() => {
-    render(<Alert message="Test" onCloseCallback={jest.fn()} />, container);
+// it("Should render the message of the alert", () => {
+//   act(() => {
+//     reactRender(<Alert message="Test" onCloseCallback={jest.fn()} />, container);
 
+//   });
+//   expect(container.hasChildNodes()).toBe(true);
+//   expect(container.textContent).toEqual(expect.stringContaining("Test"));
+// });
+
+// it("Does not render if message is null", () => {
+//   act(() => {
+//     reactRender(<Alert message={null} onCloseCallback={jest.fn()} />, container);
+//   });
+//   expect(container.hasChildNodes()).toBe(false);
+// });
+
+// it("Sends event if button is clicked", () => {
+//   const onClose = jest.fn();
+//   act(() => {
+//     reactRender(<Alert message="test" onClose={onClose} />, container);
+//   });
+
+//   const button = document.querySelector("[data-testid=close]");
+
+//   act(() => {
+//     button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+//   });
+
+//   expect(onClose).toHaveBeenCalledTimes(1);
+// });
+
+// it("Should render the new product component", () => {
+//   act(() => {
+//     reactRender(<NewProduct onAddProduct={jest.fn()} />, container);
+
+//   });
+//   expect(container.hasChildNodes()).toBe(true);
+// });
+
+// it("Sends event if add product button is clicked", () => {
+//   const onClick = jest.fn();
+//   act(() => {
+//     render(<NewProduct onAddProduct={onClick} />, container);
+//   });
+
+//   const button = document.querySelector("[data-testid=add]");
+
+//   act(() => {
+//     button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+//   });
+
+//   expect(onClick).toHaveBeenCalledTimes(1);
+// });
+
+it("Should not allow an empty title", async () => {
+  global.window = Object.create(window);
+  const url = "https://frontend.fafago-dev.alexgd.es";
+  const username = 'demo';
+  Object.defineProperty(window, 'location', {
+    value: {
+      location: url,
+      pathname: '/product_client',
+      search: '?username=' + username
+    }
   });
-  expect(container.hasChildNodes()).toBe(true);
-  expect(container.textContent).toEqual(expect.stringContaining("Test"));
-});
 
-it("Does not render if message is null", () => {
-  act(() => {
-    render(<Alert message={null} onCloseCallback={jest.fn()} />, container);
-  });
-  expect(container.hasChildNodes()).toBe(false);
-});
+  let renderContent = mount(
+    <Provider store={store}>
+      <Products />
+    </Provider>
+  );
 
-it("Sends event if button is clicked", () => {
-  const onClose = jest.fn();
-  act(() => {
-    render(<Alert message="test" onClose={onClose} />, container);
-  });
+  console.log('FIND PRODUCTS: ' + JSON.stringify(renderContent.find(Products).html()));
+  renderContent.find(Products).setState(state);
 
-  const button = document.querySelector("[data-testid=close]");
+  console.log('RENDER CONTENT: ' + JSON.stringify(renderContent.html()));
 
-  act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-  });
 
-  expect(onClose).toHaveBeenCalledTimes(1);
-});
+  let titleInput = renderContent.find({ name: 'name' });
+  let priceInput = renderContent.find({ name: 'price' });
+  let button = renderContent.find({ 'data-testid': 'add' });
 
-it("Should render the new product component", () => {
-  act(() => {
-    render(<NewProduct onAddProduct={jest.fn()} />, container);
+  // titleInput.prop('onChange')({ target: { name: 'title', value: 'You have been changed' } });
+  priceInput.prop('onChange')({ target: { name: 'price', value: 'haha yes' } });
 
-  });
-  expect(container.hasChildNodes()).toBe(true);
-});
+  button.simulate('click');
 
-it("Sends event if add product button is clicked", () => {
-  const onClick = jest.fn();
-  act(() => {
-    render(<NewProduct onAddProduct={onClick} />, container);
-  });
+  await new Promise(resolve => setTimeout(() => resolve(), 1000));
+  renderContent.find(Products).render();
 
-  const button = document.querySelector("[data-testid=add]");
+  //Wait for state change
+  await new Promise(resolve => setTimeout(() => resolve(), 1000));
 
-  act(() => {
-    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-  });
-
-  expect(onClick).toHaveBeenCalledTimes(1);
+  expect(renderContent.find(Products).state().errorInfo).toBe('Price must be a number');
 });

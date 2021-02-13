@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 
 
 
-class Review extends React.Component {
+export class Review extends React.Component {
 
   constructor(props) {
     super(props);
@@ -151,7 +151,7 @@ class Review extends React.Component {
   render() {
     var reviewCards = []
     this.state.reviews.forEach(review => {
-      reviewCards.push(<RecipeReviewCard deleteReview={this.deleteReview} deleteButton={review.reviewerClientId === this.props.username} review={review} addComment={this.addComment}></RecipeReviewCard>)
+      reviewCards.push(<RecipeReviewCard  key={review.id} deleteReview={this.deleteReview} deleteButton={review.reviewerClientId === this.props.username} review={review} addComment={this.addComment}></RecipeReviewCard>)
     })
 
     return (

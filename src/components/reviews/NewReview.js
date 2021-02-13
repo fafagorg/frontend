@@ -39,39 +39,41 @@ class NewReview extends React.Component {
         }
     }
 
-    async setValue(newValue){
+    async setValue(newValue) {
         this.state.score = newValue
     }
 
     render() {
         return (
             <table>
-                <tr>
-                    <th>Title</th>
-                    <th>Score</th>
-                    <th>Description</th>
+                <tbody>
+                    <tr>
+                        <th>Title</th>
+                        <th>Score</th>
+                        <th>Description</th>
 
 
-                    <th>&nbsp;</th>
-                    <th>&nbsp;</th>
-                </tr>
-                <tr>
-                    <td><input className="form-control" name="title" value={this.state.title} onChange={this.changeReview}></input></td>
-                    <td>
-                     
-                        <Rating
-            name="customized-empty"
-            defaultValue={1}
-            precision={1}
-            onChange={(event, newValue) => {
-                this.state.score= newValue
-              }}
-            emptyIcon={<StarBorderIcon fontSize="inherit" />}
-          />
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    <tr>
+                        <td><input className="form-control" name="title" value={this.state.title} onChange={this.changeReview}></input></td>
+                        <td>
+
+                            <Rating
+                                name="customized-empty"
+                                defaultValue={1}
+                                precision={1}
+                                onChange={(event, newValue) => {
+                                    this.state.score = newValue
+                                }}
+                                emptyIcon={<StarBorderIcon fontSize="inherit" />}
+                            />
                         </td>
-                    <td><input className="form-control" name="description" value={this.state.description} onChange={this.changeReview}></input></td>
-                    <td><button data-testid="add" className="btn btn-primary" onClick={this.clickAdd}>Add Review</button></td>
-                </tr>
+                        <td><input className="form-control" name="description" value={this.state.description} onChange={this.changeReview}></input></td>
+                        <td><button data-testid="add" className="btn btn-primary" onClick={this.clickAdd}>Add Review</button></td>
+                    </tr>
+                </tbody>
             </table>
         );
     }

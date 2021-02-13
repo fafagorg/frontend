@@ -31,7 +31,6 @@ class NewProduct extends React.Component {
 
     render() {
         return(
-            
             <tr>
                 <td><input className="form-control" placeholder="Name" name="name" value={this.state.name} onChange={(event) => this.changeProduct("name", event)}/></td>
                 <td><input className="form-control" placeholder="Price" name="price" value={this.state.price} onChange={(event) =>this.changeProduct("price", event)}/></td>

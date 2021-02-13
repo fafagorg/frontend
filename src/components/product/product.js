@@ -32,7 +32,7 @@ function Product(props){
         <CardContent>
           <Typography gutterBottom variant="h5" component="h2">
           {!props.hidden &&
-            <Link class="link" style={{ color: '#00F' }} to={"/product?id="+ props.product.id}>{props.product.name}</Link>
+            <a class="link" style={{ color: '#00F' }} href={"/product?id="+ props.product.id}>{props.product.name}</a>
           }
           {props.hidden &&
             props.product.name
@@ -43,7 +43,7 @@ function Product(props){
           </Typography>
           <Typography variant="h6" color="textPrimary" component="p">
           {!props.hideLink &&
-            <p><text>Seller: </text> <Link class="link" style={{ color: '#00F' }} to={"/profile/"+ props.product.seller}>{props.product.seller}</Link></p>
+            <p><text>Seller: </text> <a class="link" style={{ color: '#00F' }} href={"/profile/"+ props.product.seller}>{props.product.seller}</a></p>
           }
           {props.hideLink &&
             props.product.seller

@@ -191,6 +191,19 @@ export class Products extends React.Component {
         this.setState({
           errorInfo:  "Price must be a number"
         })
+      }else if(Number(product.price)<1){
+        console.log(product.price)
+        this.setState({
+          errorInfo:  "Price can not be lower than 1"
+        })
+      }else if((product.name)==""){
+        this.setState({
+          errorInfo:  "Name can not be empty"
+        })
+      }else if((product.category)==""){
+        this.setState({
+          errorInfo:  "Category can not be empty"
+        })
       }else if(this.state.bannedWords.filter((b) => { return product.name.includes(b) }).length > 0 || this.state.bannedWords.filter((b) => { return product.category.includes(b) }).length > 0){
         this.setState({
           errorInfo:  "Banned word used in name or category"
@@ -209,7 +222,7 @@ export class Products extends React.Component {
     }
 
     render() {
-      
+     
         return(
           <>
         <div>

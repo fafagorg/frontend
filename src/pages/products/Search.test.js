@@ -54,61 +54,63 @@ afterEach(() => {
   container = null;
 });
 
-// it("Should render the message of the alert", () => {
-//   act(() => {
-//     reactRender(<Alert message="Test" onCloseCallback={jest.fn()} />, container);
+it("Should render the message of the alert", () => {
+  act(() => {
+    reactRender(<Alert message="Test" onCloseCallback={jest.fn()} />, container);
 
-//   });
-//   expect(container.hasChildNodes()).toBe(true);
-//   expect(container.textContent).toEqual(expect.stringContaining("Test"));
-// });
+  });
+  expect(container.hasChildNodes()).toBe(true);
+  expect(container.textContent).toEqual(expect.stringContaining("Test"));
+});
 
-// it("Does not render if message is null", () => {
-//   act(() => {
-//     reactRender(<Alert message={null} onCloseCallback={jest.fn()} />, container);
-//   });
-//   expect(container.hasChildNodes()).toBe(false);
-// });
+it("Does not render if message is null", () => {
+  act(() => {
+    reactRender(<Alert message={null} onCloseCallback={jest.fn()} />, container);
+  });
+  expect(container.hasChildNodes()).toBe(false);
+});
 
-// it("Sends event if button is clicked", () => {
-//   const onClose = jest.fn();
-//   act(() => {
-//     reactRender(<Alert message="test" onClose={onClose} />, container);
-//   });
+it("Sends event if button is clicked", () => {
+  const onClose = jest.fn();
+  act(() => {
+    reactRender(<Alert message="test" onClose={onClose} />, container);
+  });
 
-//   const button = document.querySelector("[data-testid=close]");
+  const button = document.querySelector("[data-testid=close]");
 
-//   act(() => {
-//     button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-//   });
+  act(() => {
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  });
 
-//   expect(onClose).toHaveBeenCalledTimes(1);
-// });
+  expect(onClose).toHaveBeenCalledTimes(1);
+});
 
-// it("Should render the new product component", () => {
-//   act(() => {
-//     reactRender(<NewProduct onAddProduct={jest.fn()} />, container);
+it("Should render the new product component", () => {
+  act(() => {
+    reactRender(<NewProduct onAddProduct={jest.fn()} />, container);
 
-//   });
-//   expect(container.hasChildNodes()).toBe(true);
-// });
+  });
+  expect(container.hasChildNodes()).toBe(true);
+});
 
-// it("Sends event if add product button is clicked", () => {
-//   const onClick = jest.fn();
-//   act(() => {
-//     render(<NewProduct onAddProduct={onClick} />, container);
-//   });
+it("Sends event if add product button is clicked", () => {
+  const onClick = jest.fn();
+  act(() => {
+    reactRender(<NewProduct onAddProduct={onClick} />, container);
+  });
 
-//   const button = document.querySelector("[data-testid=add]");
 
-//   act(() => {
-//     button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-//   });
+  act(() => {
+    console.log(document)
+    const button = document.querySelector("[data-testid=add]");
+    button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    
+  });
 
-//   expect(onClick).toHaveBeenCalledTimes(1);
-// });
+  expect(onClick).toHaveBeenCalledTimes(1);
+});
 
-it("Should not allow a string in the price field", async () => {
+it("Should not allow a string in the price field (only allow numbers)", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es";
   const username = 'RandomUser'
@@ -261,7 +263,7 @@ it("Category should not be empty", async () => {
 });
 
 
-it("Product creation should not return errors", async () => {
+it("Product creation should be succesful and do not return errors", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es/";
   const username = 'RandomUser'
@@ -302,7 +304,7 @@ it("Product creation should not return errors", async () => {
 
 
 
-it("Category should not have banned words", async () => {
+it("Category should not contain banned words", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es/";
   const username = 'RandomUser'
@@ -342,7 +344,7 @@ it("Category should not have banned words", async () => {
 
 
 
-it("User RandomUser should have 1 product and should be listed", async () => {
+it("User RandomUser should have 1 product and it should be listed", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es/";
   const username = 'RandomUser';

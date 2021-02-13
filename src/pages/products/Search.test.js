@@ -28,7 +28,7 @@ beforeEach(() => {
 
   nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
     .get('/api/v1/products/client/asd')
-    .reply(200, []);
+    .reply(200, [{"name": "delete", "price":5, "category": "delete", "seller":"deleteTest"}]);
 
   nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
     .get('/api/v1/rates')
@@ -95,7 +95,7 @@ afterEach(() => {
 //   expect(onClick).toHaveBeenCalledTimes(1);
 // });
 
-it("Should not allow an empty title", async () => {
+it("Should not allow a string in the price field", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es";
   const username = 'asd';
@@ -123,8 +123,7 @@ it("Should not allow an empty title", async () => {
   let priceInput = renderContent.find({ name: 'price' });
   let button = renderContent.find({ 'data-testid': 'add' });
 
-  // titleInput.prop('onChange')({ target: { name: 'title', value: 'You have been changed' } });
-  priceInput.prop('onChange')({ target: { name: 'price', value: 'haha yes' } });
+  priceInput.prop('onChange')({ target: { name: 'price', value: 'string' } });
 
   button.simulate('click');
   renderContent.find(Products).render();
@@ -134,3 +133,126 @@ it("Should not allow an empty title", async () => {
 
   expect(renderContent.find(Products).state().errorInfo).toBe('Price must be a number');
 });
+
+it("Should not allow a value lower than 1 in the price", async () => {
+  global.window = Object.create(window);
+  const url = "https://frontend.fafago-dev.alexgd.es";
+  const username = 'asd';
+  Object.defineProperty(window, 'location', {
+    value: {
+      location: url,
+      pathname: '/product_client',
+      search: '?username=' + username
+    }
+  });
+
+  let renderContent = mount(
+    <Provider store={store}>
+      <Products />
+    </Provider>
+  );
+
+  console.log('FIND PRODUCTS: ' + JSON.stringify(renderContent.find(Products).html()));
+  renderContent.find(Products).setState(state);
+
+  console.log('RENDER CONTENT: ' + JSON.stringify(renderContent.html()));
+
+
+  let titleInput = renderContent.find({ name: 'name' });
+  let priceInput = renderContent.find({ name: 'price' });
+  let button = renderContent.find({ 'data-testid': 'add' });
+
+  priceInput.prop('onChange')({ target: { name: 'price', value: 0 } });
+  
+  
+
+  button.simulate('click');
+  renderContent.find(Products).render();
+
+  //Wait for state change
+  await new Promise(resolve => setTimeout(() => resolve(), 500));
+
+  expect(renderContent.find(Products).state().errorInfo).toBe('Price can not be lower than 1');
+});
+
+/*it("Should not allow a string in the price field", async () => {
+  global.window = Object.create(window);
+  const url = "https://frontend.fafago-dev.alexgd.es";
+  const username = 'asd';
+  Object.defineProperty(window, 'location', {
+    value: {
+      location: url,
+      pathname: '/product_client',
+      search: '?username=' + username
+    }
+  });
+
+  let renderContent = mount(
+    <Provider store={store}>
+      <Products />
+    </Provider>
+  );
+
+  console.log('FIND PRODUCTS: ' + JSON.stringify(renderContent.find(Products).html()));
+  renderContent.find(Products).setState(state);
+
+  console.log('RENDER CONTENT: ' + JSON.stringify(renderContent.html()));
+
+
+  let titleInput = renderContent.find({ name: 'name' });
+  let priceInput = renderContent.find({ name: 'price' });
+  let button = renderContent.find({ 'data-testid': 'add' });
+
+  priceInput.prop('onChange')({ target: { name: 'price', value: 0 } });
+  
+  
+
+  button.simulate('click');
+  renderContent.find(Products).render();
+
+  //Wait for state change
+  await new Promise(resolve => setTimeout(() => resolve(), 500));
+
+  expect(renderContent.find(Products).state().errorInfo).toBe('Price can not be lower than 1');
+});
+
+it("Should not allow a string in the price field", async () => {
+  global.window = Object.create(window);
+  const url = "https://frontend.fafago-dev.alexgd.es";
+  const username = 'asd';
+  Object.defineProperty(window, 'location', {
+    value: {
+      location: url,
+      pathname: '/product_client',
+      search: '?username=' + username
+    }
+  });
+
+  let renderContent = mount(
+    <Provider store={store}>
+      <Products />
+    </Provider>
+  );
+
+  console.log('FIND PRODUCTS: ' + JSON.stringify(renderContent.find(Products).html()));
+  renderContent.find(Products).setState(state);
+
+  console.log('RENDER CONTENT: ' + JSON.stringify(renderContent.html()));
+
+
+  let titleInput = renderContent.find({ name: 'name' });
+  let priceInput = renderContent.find({ name: 'price' });
+  let button = renderContent.find({ 'data-testid': 'add' });
+
+  priceInput.prop('onChange')({ target: { name: 'price', value: 0 } });
+  
+  
+
+  button.simulate('click');
+  renderContent.find(Products).render();
+
+  //Wait for state change
+  await new Promise(resolve => setTimeout(() => resolve(), 500));
+
+  expect(renderContent.find(Products).state().errorInfo).toBe('Price can not be 0');
+});*/

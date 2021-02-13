@@ -8,6 +8,7 @@ import { configure, mount, shallow, render } from "enzyme";
 import { Provider } from "react-redux";
 import configureMockStore from "redux-mock-store";
 import nock from 'nock';
+import { Products as singleProduct} from  '../../components/product/singleProduct'
 
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 import products from "../../components/product/products";
@@ -17,8 +18,7 @@ configure({ adapter: new Adapter() })
 const mockStore = configureMockStore();
 
 let state = { token: '1234', username: 'test', currentUser: 'test' };
-// const store = mockStore(() => state);
-// this.state.token && this.state.username === this.state.currentUser
+
 const store = mockStore();
 
 let container = document.createElement("div");
@@ -41,7 +41,18 @@ beforeEach(() => {
     
   nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
   .get('/api/v1/products/client/RandomUser').times(100)
+  .reply(200, [{ "name": "This is a fantastic product for a test.", "price": 5, "category": "delete", "seller": "RandomUser" }]);
+
+  nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+  .get('/api/v1/products/1').times(100)
   .reply(200, [{ "name": "This is a fantastic product for a test.", "price": 5, "category": "delete", "seller": "deleteTest" }]);
+
+  nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
+  .get('/api/v1/').times(100)
+  .reply(200, [{ "name": "ProductA", "price": 5, "category": "example", "seller": "example" },
+              { "name": "ProductB", "price": 15, "category": "test", "seller": "test" },
+              { "name": "ProductC", "price": 10, "category": "demo", "seller": "demo" }
+          ]);
 
   nock('http://localhost:8080').defaultReplyHeaders({ 'access-control-allow-origin': '*' })
     .get('/api/v1/rates').times(100)
@@ -344,7 +355,7 @@ it("Category should not contain banned words", async () => {
 
 
 
-it("User RandomUser should have 1 product and it should be listed", async () => {
+it("User 'RandomUser' should have one product and it should be listed", async () => {
   global.window = Object.create(window);
   const url = "https://frontend.fafago-dev.alexgd.es/";
   const username = 'RandomUser';
@@ -368,3 +379,29 @@ it("User RandomUser should have 1 product and it should be listed", async () => 
   expect(renderContent.find(Products).state().errorInfo).toBe(null);
   expect(renderContent.find(Products).html().includes("This is a fantastic product for a test.")).toBe(true);
 });
+
+
+
+it("The view of a single product should have one product and it should be listed", async () => {
+  global.window = Object.create(window);
+  const url = "https://frontend.fafago-dev.alexgd.es/";
+  Object.defineProperty(window, 'location', {
+    value: {
+      location: url,
+      pathname: '/products',
+      search: '/1'
+    }
+  });
+
+  let renderContent = mount(
+    <Provider store={store}>
+      <Products />
+    </Provider>
+  );
+
+  //Wait for state change
+  await new Promise(resolve => setTimeout(() => resolve(), 500));
+  expect(renderContent.find(Products).state().errorInfo).toBe(null);
+  expect(renderContent.find(Products).html().includes("This is a fantastic product for a test.")).toBe(true);
+});
+

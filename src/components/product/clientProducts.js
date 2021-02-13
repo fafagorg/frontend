@@ -192,7 +192,6 @@ export class Products extends React.Component {
           errorInfo:  "Price must be a number"
         })
       }else if(Number(product.price)<1){
-        console.log(product.price)
         this.setState({
           errorInfo:  "Price can not be lower than 1"
         })
